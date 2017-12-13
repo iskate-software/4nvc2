@@ -6,19 +6,19 @@ include("../../ASSETS/age.php");
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CRITDATA = "SELECT * FROM CRITDATA LIMIT 1 ";
 $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE DOCTOR <> 'Hospital' AND SIGNEDIN = 1 ORDER BY PRIORITY ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_CERTIFICATES = "SELECT * FROM CERTIFICATES WHERE CERTNAME='$_GET[certname]'";
 $CERTIFICATES = mysql_query($query_CERTIFICATES, $tryconnection) or die(mysql_error());
-$row_CERTIFICATES = mysql_fetch_assoc($CERTIFICATES);
+$row_CERTIFICATES = mysqli_fetch_assoc($CERTIFICATES);
 
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO='$_SESSION[client]' LIMIT 1";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 if (isset($_GET['certifpetid'])){
 $petid=$_GET['certifpetid'];
@@ -30,7 +30,7 @@ $petid=$_GET['certifpetid'];
 //if ($_GET['certname']=='VACCINATION'){
 $query_PATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT,'%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT,'%m/%d/%Y') AS POTHDAT, DATE_FORMAT(PLEUKDAT,'%m/%d/%Y') AS PLEUKDAT, DATE_FORMAT(POTHTWO,'%m/%d/%Y') AS POTHTWO, DATE_FORMAT(POTHTHR,'%m/%d/%Y') AS POTHTHR, DATE_FORMAT(POTHFOR,'%m/%d/%Y') AS POTHFOR, DATE_FORMAT(POTHFIV,'%m/%d/%Y') AS POTHFIV, DATE_FORMAT(POTHSIX,'%m/%d/%Y') AS POTHSIX, DATE_FORMAT(POTHSEV,'%m/%d/%Y') AS POTHSEV, DATE_FORMAT(POTH8,'%m/%d/%Y') AS POTH8, DATE_FORMAT(POTH9,'%m/%d/%Y') AS POTH9, DATE_FORMAT(POTH10,'%m/%d/%Y') AS POTH10, DATE_FORMAT(POTH11,'%m/%d/%Y') AS POTH11, DATE_FORMAT(POTH12,'%m/%d/%Y') AS POTH12, DATE_FORMAT(POTH13,'%m/%d/%Y') AS POTH13, DATE_FORMAT(POTH14,'%m/%d/%Y') AS POTH14, DATE_FORMAT(POTH15,'%m/%d/%Y') AS POTH15 FROM PETMAST WHERE PETID = '$petid'";
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $dates=array();
 
@@ -293,7 +293,7 @@ overflow:auto;
       <select name="signed_doctor" id="signed_doctor" onchange="document.getElementById('signature').src='../../IMAGES/SIGNATURES/'+document.getElementById('signed_doctor').value+'.jpg'; document.getElementById('signed_doctor2').innerText=document.getElementById('signed_doctor').value;">
             <?php do { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>" <?php if (isset($_GET['prtnclose']) && $_SESSION['doctor']==$row_DOCTOR['DOCTOR']) {echo "checked";}?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
         </select>      </td>
     <td align="center">&nbsp;</td>
   </tr>

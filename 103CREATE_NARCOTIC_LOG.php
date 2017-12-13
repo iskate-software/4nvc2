@@ -20,14 +20,14 @@ $narcdescrip = $_GET['descrip'] ;
 
 $QTY_available = "SELECT SUM(QTYREM) AS QTYAVAIL FROM NARCPUR WHERE ITEM = '$narc' AND QTYREM > 0 " ;
 $query_qty = mysql_query($QTY_available, $tryconnection) or die(mysql_error()) ;
-$row_qty = mysql_fetch_assoc($query_qty) ;
+$row_qty = mysqli_fetch_assoc($query_qty) ;
 $available = $row_qty['QTYAVAIL'] ;  // i.e. x
 
 $client=$_SESSION['client'];
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $psex=$row_PATIENT_CLIENT['PSEX'] ;
 
@@ -40,16 +40,16 @@ $_SESSION['petname'] = $petname ;
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN ='1' ORDER BY PRIORITY ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY PRIORITY ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 if (isset($_POST['check'])) {
  $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
  $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
- $row_PREFER = mysql_fetch_assoc($PREFER);
+ $row_PREFER = mysqli_fetch_assoc($PREFER);
 
  $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
  $treatmxx="TREATM".floor($treatmxx);
@@ -60,10 +60,10 @@ if (isset($_POST['check'])) {
 
 	$getnow = "SELECT NOW() as now, DATE_SUB(NOW(), INTERVAL 2 WEEK) AS window" ;
 	$qg = mysql_query($getnow, $tryconnection) or die(mysql_error()) ;
-	$row_q = mysql_fetch_assoc($qg) ;
+	$row_q = mysqli_fetch_assoc($qg) ;
 	$get_when = "SELECT STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y') AS PROJ" ;
 	$q_when = mysql_query($get_when, $tryconnection) or die(mysql_error()) ;
-	$row_when = mysql_fetch_assoc($q_when) ;
+	$row_when = mysqli_fetch_assoc($q_when) ;
 	
 // First, check the dates:
 
@@ -141,14 +141,14 @@ else {
  // interim values for the log.
  $get_Byear = "SELECT YEAR(PDOB) AS NYR, MONTH(PDOB) AS NMONTH FROM PETMAST WHERE PETID = '$patient' LIMIT 1" ;
  $query_Byear = mysql_query($get_Byear, $tryconnection) or die(mysql_error()) ;
- $row_Byear = mysql_fetch_assoc($query_Byear) ;
+ $row_Byear = mysqli_fetch_assoc($query_Byear) ;
  $nyr = $row_Byear['NYR'] ;
  $nmon = $row_Byear['NMONTH'] ;
  
  $now_get = "SELECT YEAR(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWYR, MONTH(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWMTH" ;
 // $now_get = "SELECT YEAR(NOW()) AS NOWYR, MONTH(NOW()) AS NOWMTH" ;
  $yea_mysql = mysql_query($now_get, $tryconnection) or die(mysql_error()) ;
- $row_convert = mysql_fetch_assoc($yea_mysql) ;
+ $row_convert = mysqli_fetch_assoc($yea_mysql) ;
  
  $nowyr = $row_convert['NOWYR'] ;
  $nowmth = $row_convert['NOWMTH'] ;
@@ -174,7 +174,7 @@ else {
     $done = 0 ;  // i.e. at this point, done to date.
 //    $out = $unfulfilled ;  
    
-    while ($row_purch = mysql_fetch_assoc($query_upd) ) {
+    while ($row_purch = mysqli_fetch_assoc($query_upd) ) {
      if ($unfulfilled > 0 ) {
        $thisbot = $row_purch['QTYREM'] ;
        $rem = $thisbot - $unfulfilled ; 
@@ -193,7 +193,7 @@ else {
 // re-calc available in case they are doing multiple logs.   
 $QTY_available = "SELECT SUM(QTYREM) AS QTYAVAIL FROM NARCPUR WHERE ITEM = '$narc' AND QTYREM > 0 " ;
 $query_qty = mysql_query($QTY_available, $tryconnection) or die(mysql_error()) ;
-$row_qty = mysql_fetch_assoc($query_qty) ;
+$row_qty = mysqli_fetch_assoc($query_qty) ;
 $available = $row_qty['QTYAVAIL'] ;  // i.e. x
 
  } //if (isset($_POST['finish'])|| isset($_POST['save']))
@@ -484,7 +484,7 @@ return valid;
         <option>???</option>
             <?php do { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-          <?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+          <?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
           </select>        </td>
     <td class="Labels2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:</td>
     <td align="left" class="Labels2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -539,7 +539,7 @@ return valid;
         <option>???</option>
             <?php 
                $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error()); 
-               while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)) { ?>
+               while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)) { ?>
 		      <option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
               <?php }  ?>
               </select>        

@@ -101,6 +101,6 @@ do { ?>
   </tr>
 </table>
   </div>
- <?php $i = $i+1; } while ($row_RECALL = mysql_fetch_assoc($RECALL)); 
+ <?php $i = $i+1; } while ($row_RECALL = mysqli_fetch_assoc($RECALL)); 
   } 
   ?>

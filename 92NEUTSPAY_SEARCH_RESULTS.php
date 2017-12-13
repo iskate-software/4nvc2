@@ -8,13 +8,13 @@ $startdate=$_POST['startdate'];
 
 $startdate="SELECT STR_TO_DATE('$startdate','%c/%e/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 $enddate=$_POST['enddate'];
 
 $enddate="SELECT STR_TO_DATE('$enddate','%c/%e/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 
 
 if (!empty($_POST['species'])){
@@ -64,26 +64,26 @@ $RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
 
 $select_RECALL = "SELECT * FROM $xtable";
 $select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($select_RECALL);
-$totalRows_RECALL = mysql_num_rows($select_RECALL);
+$row_RECALL = mysqli_fetch_assoc($select_RECALL);
+$totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
 
 else {
 $xtable = $_SESSION['oldtable'];
 $select_RECALL = "SELECT * FROM $xtable";
 $select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($select_RECALL);
-$totalRows_RECALL = mysql_num_rows($select_RECALL);
+$row_RECALL = mysqli_fetch_assoc($select_RECALL);
+$totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
 
 
 $query_REPLOG = "SELECT * FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC LIMIT 1";
 $REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
-$row_REPLOG = mysql_fetch_assoc($REPLOG);
+$row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable'";
 $POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if ($xtable == 'NEUTSPAY') {
@@ -267,7 +267,7 @@ var report=document.search_results.report;
                 <td width="10" height="30">&nbsp;</td>
                 <td><label title="<?php echo $row_POSTCARDS['MESSAGE']; ?>"><input type="radio" name="xsubtype" value="<?php echo $row_POSTCARDS['SUBTYPE']; ?>"/> <?php echo $row_POSTCARDS['SUBTYPE']; ?></label></td>
               </tr>
-              <?php } while ($row_POSTCARDS = mysql_fetch_assoc($POSTCARDS)); ?>
+              <?php } while ($row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS)); ?>
             </table>
         </div>
         </td>

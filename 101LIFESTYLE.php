@@ -6,14 +6,14 @@ $patient = $_GET['patient'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT = sprintf("SELECT PLIFE FROM PETMAST WHERE PETMAST.PETID = %s", $patient);
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $species=$_GET['species'];
 
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
 $LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
-$totalRows_LIFESTYLE = mysql_num_rows($LIFESTYLE);
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
+$totalRows_LIFESTYLE = mysqli_num_rows($LIFESTYLE);
 
 $plife=0;
 if (isset($_POST['save'])){
@@ -84,7 +84,7 @@ opener.document.patients.plife.value = document.petlifestyle.plife.value;
     <?php echo $row_LIFESTYLE['LIFESTYLE']; ?></label> </td>
     </tr>
    
-   <?php } while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE)); ?>
+   <?php } while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE)); ?>
 </table>
   </div>
 </td>
@@ -103,5 +103,5 @@ opener.document.patients.plife.value = document.petlifestyle.plife.value;
 </body>
 <!-- InstanceEnd --></html>
 <?php
-mysql_free_result($LIFESTYLE);
+mysqli_free_result($LIFESTYLE);
 ?>

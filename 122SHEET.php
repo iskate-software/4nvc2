@@ -11,36 +11,36 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$_SESSION[espatient]' LIMIT 1";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $custno = $row_PATIENT_CLIENT['CUSTNO'] ;
 
 $query_SEC_INDEX = "SELECT FNAME,LNAME FROM SECINDEX WHERE SECINDEX.CUSTNO = '$custno' " ;
 $SEC_INDEX = mysql_query($query_SEC_INDEX, $tryconnection) or die(mysql_error()) ;
-$row_SEC_INDEX = mysql_fetch_assoc($SEC_INDEX) ;
+$row_SEC_INDEX = mysqli_fetch_assoc($SEC_INDEX) ;
 
 
 $query_SPECIES = "SELECT ANIMAL FROM ANIMTYPE WHERE ANIMALID = '$row_PATIENT_CLIENT[PETTYPE]' LIMIT 1 " ;
 $IS_SPECIES = mysql_query($query_SPECIES, $tryconnection) or die(mysql_error()) ;
-$species = mysql_fetch_array($IS_SPECIES) ;
+$species = mysqli_fetch_array($IS_SPECIES) ;
 
 $query_PATIENTS = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT,'%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT,'%m/%d/%Y') AS POTHDAT, DATE_FORMAT(PLEUKDAT,'%m/%d/%Y') AS PLEUKDAT FROM PETMAST WHERE CUSTNO='$row_PATIENT_CLIENT[CUSTNO]' AND (PDEAD + PMOVED ) = 0 ORDER BY PETNAME ASC";
 $PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
-$row_PATIENTS = mysql_fetch_assoc($PATIENTS);
+$row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 $query_CRITDATA = "SELECT * FROM CRITDATA LIMIT 1";
 $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_RECEP = "SELECT PROBLEM FROM RECEP WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 $tspecies = $row_PATIENT_CLIENT[PETTYPE] ;
 
 $numrows="SELECT COUNT(TNOPRINT) AS RECORDS FROM VETCAN WHERE TSPECIES = '$tspecies' AND TNOPRINT = 1 " ;
 $num_query = mysql_query($numrows, $tryconnection) or die(mysql_error()) ;
-$row_numrows = mysql_fetch_assoc($num_query);
+$row_numrows = mysqli_fetch_assoc($num_query);
 
 $limit = $row_numrows['RECORDS'] ;
 
@@ -379,7 +379,7 @@ $categ = 0 ;
        <td width="16">&nbsp;</td>
        </tr> ';
  $col_pos = 1 ;
- while ($row_TNF = mysql_fetch_assoc($TNF_query)) {
+ while ($row_TNF = mysqli_fetch_assoc($TNF_query)) {
  if ($row_TNF['TCATGRY'] != $categ) {
    echo    '<tr>' ;
    echo    '<td class="Verdana12B" colspan="4" align=left>'. $row_TNF['TTYPE']. '</td>' ;

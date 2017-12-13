@@ -5,7 +5,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE PCID='$_GET[pcid]'";
 $POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if (isset($_POST['save']) && $_GET['pcid'] == '0'){

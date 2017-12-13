@@ -22,7 +22,7 @@ if (!isset($_POST['save'])) {
                 ES1ST, ES1SP, ES1BST, ES1BSP, ES2ST, ES2SP, ES2BST, ES2BSP, ES3ST,ES3SP, ES3BST, ES3BSP FROM HRSDOC 
                 WHERE DOCTOR = '$doctor' AND DAYINWEEK = '$day' AND STARTDT <= DATE(NOW()) AND ENDDT >= DATE(NOW()) ORDER BY  HRSID DESC LIMIT 1  ";
   $GET_hrs = mysql_query($ind_hours, $tryconnection) or die(mysql_error()) ;
-  $row_hours = mysql_fetch_assoc($GET_hrs) ;
+  $row_hours = mysqli_fetch_assoc($GET_hrs) ;
  
 // Did the query find any data?
 
@@ -161,14 +161,14 @@ if (!isset($_POST['save'])) {
          $found = 0 ;
          $ind_dtls = "SELECT HDOCTOR, HSHORTDOC, HDOCINIT FROM CRITDATA WHERE HDOCTOR = '$doctor' AND SCHEDULE = 1 LIMIT 1 " ;
          $GET_dtls = mysql_query($ind_dtls, $tryconnection) or die(mysql_error()) ;
-         $row_dtls = mysql_fetch_assoc($GET_dtls) ;
+         $row_dtls = mysqli_fetch_assoc($GET_dtls) ;
          // Stage 3
          
          if (array_key_exists('HDOCTOR',$row_dtls)) {
           // The doctor does not have a schedule yet, but is at least in the Doctor file. Pick up the priority (sequence) from there.
             $get_query="SELECT PRIORITY FROM DOCTOR WHERE DOCTOR = '$doctor' LIMIT 1" ;
             $Query_sequence = mysql_query($get_query, $tryconnection) or die(mysql_error()) ;
-            $row_priority = mysql_fetch_assoc($Query_sequence) ;
+            $row_priority = mysqli_fetch_assoc($Query_sequence) ;
             $priority = $row_priority['PRIORITY'] ; 
             
    //       $doctor = $row_dtls['DOCTOR'] ;  we already have this from the opening GETs

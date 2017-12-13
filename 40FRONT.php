@@ -11,7 +11,7 @@ if (checkdate($month,$day,$year) {
  $DOCMONTH = "SELECT INITIALS,DUTY ORDER BY SEQ FROM HRSDOC WHERE DATE = '$today' AND DUTY <> '00000000000000' " ;
  $Get_Doc = mysql_query($DOCMONTH, $tryconnection) or die(mysql_error()) ;
 // and paint the screen.
- while($row = mysql_fetch_assoc($Get_Doc))
+ while($row = mysqli_fetch_assoc($Get_Doc))
 // now look for the individual flags that show where they are.. (PHP starts at posn 0. This table 
 // starts at 1....)
 // 1 am appt  Shows as A

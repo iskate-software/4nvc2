@@ -14,7 +14,7 @@ $stdum = $startdate ;
 
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -26,12 +26,12 @@ $enddum = $enddate ;
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 
 
 $Wtunit_get = "SELECT HOSPNAME, WEIGHTUNIT FROM CRITDATA LIMIT 1" ;
 $query_wt = mysql_query($Wtunit_get, $tryconnection) or die(mysql_error()) ;
-$row_Wt = mysql_fetch_assoc($query_wt) ;
+$row_Wt = mysqli_fetch_assoc($query_wt) ;
 
 $Wtunit = $row_Wt['WEIGHTUNIT'].',' ;
 $Hosp = $row_Wt['HOSPNAME'] ;
@@ -75,7 +75,7 @@ display:block;
       <input type="button" value="PRINT" onclick="window.print();"/>
       <input type="button" value="CLOSE" onclick="history.back();"/>
       </div>
-  <?php while ($row_SURGLOG = mysql_fetch_assoc($query_surg) ) { ?>
+  <?php while ($row_SURGLOG = mysqli_fetch_assoc($query_surg) ) { ?>
   <table width="95%" cellspacing="0" cellpadding="0" style="border:2px solid blue">
   <tr>
     <td width="15%" class="Verdana12BBlue">

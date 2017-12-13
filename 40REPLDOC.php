@@ -5,7 +5,7 @@ require_once('../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLIENT = sprintf("SELECT * FROM ARCUSTO WHERE CUSTNO = '%s'", $_GET['client']);
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->

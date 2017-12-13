@@ -193,7 +193,7 @@ document.getElementById('inuse').innerText=localStorage.xdatabase;
     </tr>
     
   <?php 
-   while ($row_doc = mysql_fetch_assoc($query_doc)) {
+   while ($row_doc = mysqli_fetch_assoc($query_doc)) {
    $unique1 = $row_doc['UNIQUE1'] ; 
    $i = $unique1 ;
     echo
@@ -228,7 +228,7 @@ document.getElementById('inuse').innerText=localStorage.xdatabase;
 <tr height="50"><td>Replacement doctor
   <select name="replacement_doctor" id="replacement_doctor"><option value=""></option>
   <option value=" ">No Doctor</option>
-  <?php while ($row_who = mysql_fetch_assoc($query_who)) { ?>
+  <?php while ($row_who = mysqli_fetch_assoc($query_who)) { ?>
             <option value="<?php echo $row_who['SHORTDOC']; ?>"><?php echo $row_who['DOCTOR']; ?></option>
             <?php }  ?>
   </select>

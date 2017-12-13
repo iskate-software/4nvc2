@@ -14,7 +14,7 @@ $sortby = REFVET;
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_REFERRAL = sprintf("SELECT * FROM REFER WHERE REFCLIN LIKE '%s' AND REFVET LIKE '%s' ORDER BY $sortby ASC", mysql_real_escape_string($refclin).'%', mysql_real_escape_string($refvet).'%');
 $REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
-$row_REFERRAL = mysql_fetch_assoc($REFERRAL);
+$row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/IFRAME.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -92,7 +92,7 @@ function putInReferral(refvet,refclin,refid,tea)
       <td width="" align="left"><?php echo $row_REFERRAL['ADDRESS']; ?><br  /> <?php echo $row_REFERRAL['CITY']; ?><br  /> <?php echo $row_REFERRAL['ZIP']; ?></td>
    </tr>
     
-    <?php } while ($row_REFERRAL = mysql_fetch_assoc($REFERRAL)); ?>
+    <?php } while ($row_REFERRAL = mysqli_fetch_assoc($REFERRAL)); ?>
 </table>
 </div>
 

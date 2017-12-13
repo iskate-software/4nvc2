@@ -16,7 +16,7 @@ $stdum = $startdate ;
 
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
  
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -29,7 +29,7 @@ $enddum = $enddate ;
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDING";
 $enddate = mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate = mysql_fetch_array($enddate) ;
+$enddate = mysqli_fetch_array($enddate) ;
 
 $search = "" ;
 
@@ -58,7 +58,7 @@ else if ($file2search == 3)  {
 
 $Wtunit_get = "SELECT HOSPNAME, WEIGHTUNIT FROM CRITDATA LIMIT 1" ;
 $query_wt = mysql_query($Wtunit_get, $tryconnection) or die(mysql_error()) ;
-$row_Wt = mysql_fetch_assoc($query_wt) ;
+$row_Wt = mysqli_fetch_assoc($query_wt) ;
 
 $Wtunit = $row_Wt['WEIGHTUNIT'].',' ;
 $Hosp = $row_Wt['HOSPNAME'] ;
@@ -66,7 +66,7 @@ $Hosp = $row_Wt['HOSPNAME'] ;
 //Find the client called DRUG PURCHASES, so dummy records can be created to show the shipments blended in with the usage.
 $Druggie_get = "SELECT ARCUSTO.CUSTNO AS CUST,CONTACT,COMPANY,PETNAME,PETID FROM ARCUSTO LEFT JOIN PETMAST ON ARCUSTO.CUSTNO = PETMAST.CUSTNO WHERE COMPANY = 'PURCHASES' AND CONTACT = 'DRUG' AND PETNAME = 'SHIPMENT IN' LIMIT 1" ;
 $query_purch = mysql_query($Druggie_get, $tryconnection) or die(mysql_error()) ;
-$row_purch = mysql_fetch_assoc($query_purch) ;
+$row_purch = mysqli_fetch_assoc($query_purch) ;
 $purch_custno = $row_purch['CUST'] ;
 $purch_company = $row_purch['COMPANY'] ;
 $purch_contact = $row_purch['CONTACT'] ;
@@ -133,7 +133,7 @@ display:block;
       <input type="button" value="PRINT" onclick="window.print();"/>
       <input type="button" value="CLOSE" onclick="history.back();"/>
       </div>
-  <?php while ($row_NARCLOG = mysql_fetch_assoc($query_final) ) { ?>
+  <?php while ($row_NARCLOG = mysqli_fetch_assoc($query_final) ) { ?>
   <table width="95%" cellspacing="0" cellpadding="0" style="border:2px solid blue">
   <tr>
   <td width="33%" class="Verdana12BHL">&nbsp;<?php echo $row_NARCLOG['DESCRIP'];?></td>

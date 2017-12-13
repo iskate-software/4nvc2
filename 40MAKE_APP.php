@@ -19,7 +19,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $Get_now = "SELECT NOW() AS NOW ";
 $Query_now = mysql_query($Get_now, $tryconnection) or die(mysql_error()) ;
-$row_now = mysql_fetch_assoc($Query_now) ;
+$row_now = mysqli_fetch_assoc($Query_now) ;
 $vs = substr($row_now['NOW'],0,10) ;
 $date1 = strftime('%Y-%m-%d',$date);
 
@@ -32,7 +32,7 @@ $eday = substr($exit_date,3,2) ;
 
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '%H:%i') AS TIME FROM RECEP WHERE RFPETID='$patient' LIMIT 1";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
  
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN=1 ORDER BY PRIORITY ");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
@@ -43,7 +43,7 @@ $Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
 $docss = array() ;
 $docsl = array() ;
 $key = 0 ;
- while ($row_Doctor = mysql_fetch_assoc($Doctor)) {
+ while ($row_Doctor = mysqli_fetch_assoc($Doctor)) {
   $docss[] = $row_Doctor['SHORTDOC'] ;
   $docsl[] = $row_Doctor['DOCTOR'] ;
   $key++ ;
@@ -62,7 +62,7 @@ if (isset($_POST['check'])) {
 // Step 1  Pick the next 3 items out of HOSPHOURS.
  $query_param = "SELECT ENDHOUR,ENDMIN,APPTTIME FROM HOSPHOURS WHERE DAY = DAYOFWEEK(FROM_UNIXTIME('$date'))-1 LIMIT 1 " ;
  $Get_param   = mysql_query($query_param, $tryconnection) or die(mysql_error()) ;
- $row_param   = mysql_fetch_assoc($Get_param) ;
+ $row_param   = mysqli_fetch_assoc($Get_param) ;
  $endahour    = $row_param['ENDHOUR'] ;
  $endamin     = $row_param['ENDMIN'] ;
  $show        = $row_param['APPTTIME'] ;
@@ -79,13 +79,13 @@ if (isset($_POST['check'])) {
 
  $whatdate = "SELECT FROM_UNIXTIME('$date','%Y-%m-%d') as NEWDATE" ;
  $readit = mysql_query($whatdate, $tryconnection) or die(mysql_error()); 
- $row_date = mysql_fetch_assoc($readit) ;
+ $row_date = mysqli_fetch_assoc($readit) ;
  $english = $row_date['NEWDATE'] ;
 
  while ($cycle >= $show) {
   $CHK1 = "SELECT APPTNUM FROM APPTS WHERE DATEOF = '$english' AND TIMEOF = '$newtime' AND SHORTDOC = '$docsurname' AND CANCELLED <> 1 LIMIT 1" ;
   $query_CHK1 = mysql_query($CHK1, $tryconnection) or die(mysql_error()) ;
-  $row_CHK1 = mysql_fetch_array($query_CHK1) ;
+  $row_CHK1 = mysqli_fetch_array($query_CHK1) ;
 
 // Check for collisions
 
@@ -126,7 +126,7 @@ if ($empty == 0 ) {
 
     $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
     $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-    $row_PREFER = mysql_fetch_assoc($PREFER);
+    $row_PREFER = mysqli_fetch_assoc($PREFER);
     
     $client = $_SESSION['client'] ;
 
@@ -166,7 +166,7 @@ if ($empty == 0 ) {
     
     $today = "SELECT DATE(NOW()) AS DATE, TIME(NOW()) AS TIME ";
     $query_date = mysql_query($today, $tryconnection) or die(mysql_error()) ;
-    $row_date = mysql_fetch_array($query_date) ;
+    $row_date = mysqli_fetch_array($query_date) ;
     $datex = $row_date['DATE'] ;
     $timex = $row_date['TIME'] ;
              
@@ -562,7 +562,7 @@ document.getElementById('maxnum').innerText=chars;
         <td height="30" colspan="2">
 <select name="staff" id="staff">
 			<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;???</option>
-			<?php while ($row_STAFF = mysql_fetch_assoc($STAFF)) { ?>
+			<?php while ($row_STAFF = mysqli_fetch_assoc($STAFF)) { ?>
             <option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
             <?php }  ?>
         </select>        </td>

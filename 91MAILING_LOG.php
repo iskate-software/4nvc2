@@ -8,7 +8,7 @@ $xtable = $_GET['type'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_REPLOG = "SELECT *, DATE_FORMAT(LOGDTE, '%m/%d/%Y') AS LOGDTE1, DATE_FORMAT(LOGDTE, '%H:%i:%s') AS LOGDTE2 FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC";
 $REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
-$row_REPLOG = mysql_fetch_assoc($REPLOG);
+$row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 if ($xtable == 'ANNUAL') {
 $xtitle = "MAILING LOG FOR ANNUAL EXAMS";
@@ -200,7 +200,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
   </tr>';
   $i = $i+1;
   }
-  while ($row_REPLOG=mysql_fetch_assoc($REPLOG));
+  while ($row_REPLOG=mysqli_fetch_assoc($REPLOG));
   
   ?>
   

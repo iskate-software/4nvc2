@@ -6,11 +6,11 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_DOCTOR = sprintf("SELECT * FROM DOCTOR ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT * FROM STAFF ORDER BY STAFF ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 if (isset($_POST['save'])){
 
@@ -53,14 +53,14 @@ if (isset($_POST['save'])){
 	if (!empty($_POST['credate'])){
 	$credateconv="SELECT STR_TO_DATE('".$_POST['credate']."','%m/%d/%Y')";
 	$credaterun=mysql_query($credateconv, $tryconnection) or die(mysql_error());
-	$credate=mysql_fetch_array($credaterun);
+	$credate=mysqli_fetch_array($credaterun);
 	$_SESSION['credate']=$credate[0];
 	}
 	else {unset($_SESSION['credate']);}
 	if (!empty($_POST['tdate'])){
 	$tdateconv="SELECT STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y')";
 	$tdaterun=mysql_query($tdateconv, $tryconnection) or die(mysql_error());
-	$tdate=mysql_fetch_array($tdaterun);
+	$tdate=mysqli_fetch_array($tdaterun);
 	$_SESSION['tdate']=$tdate[0];
 	}
 	else {unset($_SESSION['tdate']);}
@@ -71,13 +71,13 @@ $closewindow='opener.document.location="DUTY_LOG.php";self.close();';
 if (isset($_SESSION['credate'])){
 	$credateconvback="SELECT DATE_FORMAT('".$_SESSION['credate']."', '%m/%d/%Y')";
 	$credaterunback=mysql_query($credateconvback, $tryconnection) or die(mysql_error());
-	$credateback=mysql_fetch_array($credaterunback);
+	$credateback=mysqli_fetch_array($credaterunback);
 }
 
 if (isset($_SESSION['tdate'])){
 	$tdateconvback="SELECT DATE_FORMAT('".$_SESSION['tdate']."', '%m/%d/%Y')";
 	$tdaterunback=mysql_query($tdateconvback, $tryconnection) or die(mysql_error());
-	$tdateback=mysql_fetch_array($tdaterunback);
+	$tdateback=mysqli_fetch_array($tdaterunback);
 }
 
 if (isset($_POST['clear'])){
@@ -189,11 +189,11 @@ opener.document.location="DUTY_LOG.php";
             <?php //if($row_DLOG['ENTEREDBY']==$row_STAFF['DOCINIT']){echo "selected='selected'";} ?>
 			<?php do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" ><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); 
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); 
 			
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($row_DLOG['WHOTODO']==$row_STAFF['STAFFINIT']){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
 			</select>    </td>
       
       
@@ -201,21 +201,21 @@ opener.document.location="DUTY_LOG.php";
           <select name="whotodo" id="whotodo">
 			<?php 
 			$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-			$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+			$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 			do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($_SESSION['whotodo']==$row_DOCTOR['DOCINIT']){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
 			
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
 
 			<option value="REC" <?php if($_SESSION['whotodo']=="REC"){echo "selected='selected'";} ?>>REC</option>			
 			<option value="TEC" <?php if($_SESSION['whotodo']=="TEC"){echo "selected='selected'";} ?>>TEC</option>			
 			
             <?php 
             $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-            $row_STAFF = mysql_fetch_assoc($STAFF);
+            $row_STAFF = mysqli_fetch_assoc($STAFF);
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($_SESSION['whotodo']==$row_STAFF['STAFFINIT']){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>    </td>
       <td width="40" align="center" class="Labels">&nbsp;</td>
     </tr>
@@ -233,5 +233,5 @@ opener.document.location="DUTY_LOG.php";
 </body>
 <!-- InstanceEnd --></html>
 <?php 
-mysql_free_result($STAFF);
+mysqli_free_result($STAFF);
 ?>

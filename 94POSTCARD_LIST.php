@@ -5,7 +5,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$_GET[type]' ORDER BY SUBTYPE ASC";
 $POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -72,7 +72,7 @@ font-size:16px;
                 <td><?php echo $row_POSTCARDS['SUBTYPE']; ?></td>
                 <td><?php echo $row_POSTCARDS['MESSAGE']; ?></td>
               </tr>
-         <?php } while ($row_POSTCARDS = mysql_fetch_assoc($POSTCARDS)); ?>
+         <?php } while ($row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS)); ?>
 		</table>
     </div>
     </td>

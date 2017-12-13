@@ -6,7 +6,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $get_Year = "SELECT MOD((YEAR(NOW())-1)/4,1) AS LEAP " ;
 $query_Year = mysql_query($get_Year, $tryconnection) or die(mysql_error()) ;
-$get_leap = mysql_fetch_assoc($query_Year) ;
+$get_leap = mysqli_fetch_assoc($query_Year) ;
 $year = $get_leap['LEAP'] ;
 
 if ($_POST['startweek']==1){
@@ -51,7 +51,7 @@ if ($month == 2) {
 
  $Lastyr = "SELECT YEAR(NOW())- 1 AS Lyear" ;
  $getyr = mysql_query($Lastyr, $tryconnection) or die(mysql_error()) ;
- $getyr1 = mysql_fetch_assoc($getyr) ;
+ $getyr1 = mysqli_fetch_assoc($getyr) ;
  $rowlast = $getyr1['Lyear'] ;
 
 $annual1 = $_POST['startmonth'].'/'.$startday.'/'.$rowlast;

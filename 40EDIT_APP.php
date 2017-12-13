@@ -12,7 +12,7 @@ $winback = '' ;
 $retrieve = "SELECT APPTNUM,DATEOF,TIMEOF,SHORTDOC,DOCREQ,CUSTNO,PETID,NAME,CONTACT,NEWCL,PETNAME,NEWPET,PROBLEM,DURATION,RFPETTYPE, STAFF,CAREA,PHONE1,CAREA2,PHONE2, 
              DATE_FORMAT(DATEMADE,'%e %M %Y') AS DATEMADE, CHSTAFF, DATE_FORMAT(CHDATE,'%e %M %Y') AS CHDATE FROM APPTS WHERE APPTNUM = '$apptnum' AND CANCELLED <> 1 LIMIT 1" ;
 $Get_AP = mysql_query($retrieve, $tryconnection) or die(mysql_error()) ;
-$row_AP  = mysql_fetch_assoc($Get_AP) ;
+$row_AP  = mysqli_fetch_assoc($Get_AP) ;
 
   $ak = $apptnum ;
   $dateof =   $row_AP['DATEOF'] ;
@@ -48,7 +48,7 @@ $Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
 $docss = array() ;
 $docsl = array() ;
 $key = 0 ;
- while ($row_Doctor = mysql_fetch_assoc($Doctor)) {
+ while ($row_Doctor = mysqli_fetch_assoc($Doctor)) {
   $docss[] = $row_Doctor['SHORTDOC'] ;
   $docsl[] = $row_Doctor['DOCTOR'] ;
   $key++ ;
@@ -72,7 +72,7 @@ if (isset($_POST['delete'])) {
 
     $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
     $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-    $row_PREFER = mysql_fetch_assoc($PREFER);
+    $row_PREFER = mysqli_fetch_assoc($PREFER);
     
 //    $client = $_SESSION['client'] ;
 
@@ -90,7 +90,7 @@ if (isset($_POST['delete'])) {
 	
 	$now = "SELECT DATE_FORMAT(NOW(),'%a, %b %D %Y at %H:%i') AS NOW" ;
 	$Q_now = mysql_query($now, $tryconnection) or die(mysql_error()) ;
-	$row_now = mysql_fetch_assoc($Q_now) ;
+	$row_now = mysqli_fetch_assoc($Q_now) ;
 	$ti = $row_now['NOW'] ;
 	
 	$today = 'Appointment CANCELLED by '.
@@ -117,7 +117,7 @@ if (isset($_POST['save']) ) {
 // Step 1  Pick the next 3 items out of HOSPHOURS.
   $query_param = "SELECT ENDHOUR,ENDMIN,APPTTIME FROM HOSPHOURS WHERE DAY = DAYOFWEEK(FROM_UNIXTIME('$date'))-1 LIMIT 1 " ;
   $Get_param   = mysql_query($query_param, $tryconnection) or die(mysql_error()) ;
-  $row_param   = mysql_fetch_assoc($Get_param) ;
+  $row_param   = mysqli_fetch_assoc($Get_param) ;
   $endahour    = $row_param['ENDHOUR'] ;
   $endamin     = $row_param['ENDMIN'] ;
   $show        = $row_param['APPTTIME'] ;
@@ -143,7 +143,7 @@ if (isset($_POST['save']) ) {
   while ($cycle >= $show) {
     $CHK1 = "SELECT APPTNUM FROM APPTS WHERE DATEOF = '$english' AND TIMEOF = '$newtime' AND SHORTDOC = '$docsurname' AND CANCELLED <> 1 AND APPTNUM <> '$ak' LIMIT 1" ;
     $query_CHK1 = mysql_query($CHK1, $tryconnection) or die(mysql_error()) ;
-    $row_CHK1 = mysql_fetch_array($query_CHK1) ;
+    $row_CHK1 = mysqli_fetch_array($query_CHK1) ;
 
 // Check for collisions
 
@@ -543,7 +543,7 @@ function addtext() {
         <td height="30" colspan="2">
 <select name="staff" id="staff">
 			<option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;???</option>
-			<?php while ($row_STAFF = mysql_fetch_assoc($STAFF)) { ?>
+			<?php while ($row_STAFF = mysqli_fetch_assoc($STAFF)) { ?>
             <option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
             <?php }  ?>
         </select>        </td>

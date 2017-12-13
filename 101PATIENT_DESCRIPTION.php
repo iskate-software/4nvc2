@@ -7,7 +7,7 @@ $patient = $_GET['patient'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_DESCRIPTION = "SELECT PDESCRIPTION FROM EQDESC WHERE DPETID = '$patient'";
 $DESCRIPTION = mysql_query($query_DESCRIPTION, $tryconnection) or die(mysql_error());
-$row_DESCRIPTION = mysql_fetch_assoc($DESCRIPTION);
+$row_DESCRIPTION = mysqli_fetch_assoc($DESCRIPTION);
 
 if (isset($_POST['save'])){
 	if (empty($row_DESCRIPTION['PDESCRIPTION'])){

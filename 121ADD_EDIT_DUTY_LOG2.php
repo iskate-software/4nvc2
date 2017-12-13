@@ -9,7 +9,7 @@ $dutylogid=$_GET['dutylogid'];
 
 $query_DLOG = "SELECT *, DATE_FORMAT(TDATE, '%m/%d/%Y') AS TDATE, DATE_FORMAT(TTIME, '$timeformat') AS TTIME FROM TICKLER WHERE DUTYLOGID='$dutylogid'";
 $DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
+$row_DLOG = mysqli_fetch_assoc($DLOG);
 
 $patient=$row_DLOG['PETID'];
 $client=$row_DLOG['CUSTNO'];
@@ -24,16 +24,16 @@ $client=$_GET['client'];
 
 $query_CLIENT_PATIENT="SELECT * FROM ARCUSTO JOIN PETMAST ON (PETMAST.PETID = '$patient') WHERE ARCUSTO.CUSTNO='$client' LIMIT 1";
 $CLIENT_PATIENT=mysql_query($query_CLIENT_PATIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT_PATIENT = mysql_fetch_assoc($CLIENT_PATIENT);
+$row_CLIENT_PATIENT = mysqli_fetch_assoc($CLIENT_PATIENT);
 
 
 $query_DOCTOR = sprintf("SELECT DOCTOR, DOCINIT FROM DOCTOR ORDER BY PRIORITY ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF, STAFFINIT FROM STAFF ORDER BY STAFF ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 ////////DAYS - TRY TO FIND OUT IF IT WORKS WITHOUT THIS SCRIPT - WAS GIVING TROUBLE ONLY IN WINDOWS.
 if (empty($_POST['days'])){
@@ -252,11 +252,11 @@ document.getElementById('maxnum').innerText=chars;
         <select name="enteredby" id="enteredby">
 			<?php do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($row_DLOG['ENTEREDBY']==$row_STAFF['DOCINIT']  && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); 
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); 
 			
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($row_DLOG['WHOTODO']==$row_STAFF['STAFFINIT']  && !empty($row_DLOG['WHOTODO'])){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
 			</select>    </td>
     <td width="70" align="right" valign="middle" class="Labels2">Date Due</td>
     <td width="114" align="left" valign="middle" class="Labels2"><input onclick="ds_sh(this);" name="tdate" type="text" class="Input" id="tdate" size="10" onfocus="InputOnFocus(this.id)" onblur="InputOnBlur(this.id)" value="<?php if (!empty($row_DLOG['TDATE'])) {echo $row_DLOG['TDATE']; } else {echo date("m/d/Y",mktime(0,0,0,date("m").date("d")+7.date("Y"))} ?>" title="MM/DD/YYYY"/></td>
@@ -268,21 +268,21 @@ document.getElementById('maxnum').innerText=chars;
         <select name="whotodo" id="whotodo">
 			<?php 
 			$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-			$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+			$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 			do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($row_DLOG['ENTEREDBY']==$row_STAFF['DOCINIT']  && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
 			
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
 
 			<option value="REC" <?php if($row_DLOG['WHOTODO']=="REC"){echo "selected='selected'";} ?>>REC</option>			
 			<option value="TEC" <?php if($row_DLOG['WHOTODO']=="TEC"){echo "selected='selected'";} ?>>TEC</option>			
 
             <?php 
 			$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-            $row_STAFF = mysql_fetch_assoc($STAFF);
+            $row_STAFF = mysqli_fetch_assoc($STAFF);
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($row_DLOG['WHOTODO']==$row_STAFF['STAFFINIT'] && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>    </td>
     <td width="70" align="right" valign="middle" class="Labels2">Time Due</td>
     <td width="114" align="left" valign="middle" class="Labels2">

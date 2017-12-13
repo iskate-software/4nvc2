@@ -31,7 +31,7 @@ function bodyonload(){
 	else {
 	$query_INHOSP = "SELECT TEXT FROM ".$_SESSION['table'][0];
 	$INHOSP = mysql_query($query_INHOSP, $tryconnection) or die(mysql_error());
-	$row_INHOSP = mysql_fetch_assoc($INHOSP);
+	$row_INHOSP = mysqli_fetch_assoc($INHOSP);
 	$dataline = EXPLODE (' ', $row_INHOSP)
 	foreach ($dataline as $dollarsign) {
 	  if substr($dollarsign,1,1) = '$' {

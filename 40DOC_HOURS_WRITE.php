@@ -87,7 +87,7 @@ $weekday = $_SESSION['weekday'] ;
         
         $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS START";
         $startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-        $get_startdate=mysql_fetch_assoc($startdate2);
+        $get_startdate=mysqli_fetch_assoc($startdate2);
         $startdate = $get_startdate['START'] ;
 
         
@@ -101,7 +101,7 @@ $weekday = $_SESSION['weekday'] ;
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS END";
 $enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
 
-$get_enddate=mysql_fetch_assoc($enddate2);
+$get_enddate=mysqli_fetch_assoc($enddate2);
 $enddate = $get_enddate['END'] ;
 
   
@@ -112,12 +112,12 @@ $endcf = $_SESSION['endcf'] ;
  
 $begin_cvt = "SELECT STR_TO_DATE('$begincf','%m/%d/%Y') AS BEGINCF" ;
 $begin_cvt2 = mysql_query($begin_cvt, $tryconnection) or die(mysql_error());
-$get_begcv = mysql_fetch_assoc($begin_cvt2);
+$get_begcv = mysqli_fetch_assoc($begin_cvt2);
 $begincf = $get_begcv['BEGINCF'] ; 
 
 $end_cvt = "SELECT STR_TO_DATE('$endcf','%m/%d/%Y') AS ENDCF" ;
 $end_cvt2 = mysql_query($end_cvt, $tryconnection) or die(mysql_error());
-$get_endcv = mysql_fetch_assoc($end_cvt2);
+$get_endcv = mysqli_fetch_assoc($end_cvt2);
 $endcf = $get_endcv['ENDCF'] ;
 //echo ' after conversion, ' . $endcf ;
 
@@ -203,7 +203,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
  
  
@@ -215,13 +215,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -240,7 +240,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -255,7 +255,7 @@ $endcf = $get_endcv['ENDCF'] ;
        
          $new_end = "SELECT DATE_SUB('$startdate', INTERVAL 1 DAY) AS NEWEND " ;
          $get_it = mysql_query($new_end, $tryconnection) or die(mysql_error()) ;
-         $row_newend = mysql_fetch_assoc($get_it) ;
+         $row_newend = mysqli_fetch_assoc($get_it) ;
          $new_ending = $row_newend['NEWEND'] ;
        
        // The existing record is changed to run from the old start date to the new begin date minus one day.
@@ -286,7 +286,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -298,13 +298,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -323,7 +323,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -332,7 +332,7 @@ $endcf = $get_endcv['ENDCF'] ;
        
          $new_start = "SELECT DATE_ADD('$enddate', INTERVAL 1 WEEK) AS NEWSTART " ;
          $get_it = mysql_query($new_start, $tryconnection) or die(mysql_error()) ;
-         $row_newstart = mysql_fetch_assoc($get_it) ;
+         $row_newstart = mysqli_fetch_assoc($get_it) ;
          $new_starting = $row_newstart['NEWSTART'] ;
        
          $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY)
@@ -351,7 +351,7 @@ $endcf = $get_endcv['ENDCF'] ;
        
        $new_end = "SELECT DATE_SUB('$startdate', INTERVAL 1 DAY) AS NEWEND " ;
          $get_it = mysql_query($new_end, $tryconnection) or die(mysql_error()) ;
-         $row_newend = mysql_fetch_assoc($get_it) ;
+         $row_newend = mysqli_fetch_assoc($get_it) ;
          $new_ending = $row_newend['NEWEND'] ;
        
        // The existing record is changed to run from the old start date to the new begin date minus one day.
@@ -381,7 +381,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -393,13 +393,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -418,7 +418,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -451,7 +451,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -463,13 +463,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -488,7 +488,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -510,7 +510,7 @@ $endcf = $get_endcv['ENDCF'] ;
           
          $new_start = "SELECT DATE_ADD('$enddate', INTERVAL 1 DAY) AS NEWSTART " ;
          $get_it = mysql_query($new_start, $tryconnection) or die(mysql_error()) ;
-         $row_newstart = mysql_fetch_assoc($get_it) ;
+         $row_newstart = mysqli_fetch_assoc($get_it) ;
          $new_starting = $row_newstart['NEWSTART'] ;
        
        // The existing record is changed to run starting from the new ending date plus one day to the old ending date .
@@ -533,7 +533,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -545,13 +545,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -570,7 +570,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
         	} // ($target <= $enddate)
@@ -597,7 +597,7 @@ $endcf = $get_endcv['ENDCF'] ;
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -609,13 +609,13 @@ $endcf = $get_endcv['ENDCF'] ;
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
                                 $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
                					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
@@ -634,7 +634,7 @@ $endcf = $get_endcv['ENDCF'] ;
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
         	} // ($target <= $enddate)

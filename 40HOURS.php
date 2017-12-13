@@ -9,7 +9,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $get_one = "SELECT HOLIDATE,NYDATE FROM HOLIDAY ORDER BY HOLID LIMIT 1" ;
 $which_one = mysql_query($get_one, $tryconnection) or die(mysql_error()) ;
-$row_date = mysql_fetch_assoc($which_one) ;
+$row_date = mysqli_fetch_assoc($which_one) ;
 $newyear = date('Y') ;
 $lastdone = substr($row_date['HOLIDATE'],0,4) ;
 if ($newyear > $lastdone) {
@@ -26,14 +26,14 @@ $get_hol = mysql_query($get_all, $tryconnection) or die(mysql_error()) ;
 // how many holidays? 
 $howmany = "SELECT FOUND_ROWS() AS IMAX" ;
 $getmax = mysql_query($howmany, $tryconnection) or die(mysql_error()) ;
-$max = mysql_fetch_assoc($getmax) ;
+$max = mysqli_fetch_assoc($getmax) ;
 $lines = $max['IMAX'] - 1 ;
 
 $holarray = array() ;
 
 for ($i = 0; $i<=$lines; $i++) {
     
-    $get_hrow = mysql_fetch_assoc($get_hol) ;
+    $get_hrow = mysqli_fetch_assoc($get_hol) ;
     $holarray[$i][0] = $get_hrow['SHORTHOL'] ;
     $holarray[$i][1] = $get_hrow['OBSERVED'] ;
     $holarray[$i][2] = $get_hrow['HOLIDATE'] ;
@@ -94,13 +94,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate0'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate12'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 1 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -111,13 +111,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate1'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate13'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 2 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -129,13 +129,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate2'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate14'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 3 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -147,13 +147,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate3'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate15'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 4 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;  
@@ -165,13 +165,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate4'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate16'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 5 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;    
@@ -183,13 +183,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate5'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate17'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 6 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -201,13 +201,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate6'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate18'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 7 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -219,13 +219,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate7'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate19'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 8 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -237,13 +237,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate8'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate20'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 9 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -255,13 +255,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate9'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate21'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 10 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -273,13 +273,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate10'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate22'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 11 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;
@@ -291,13 +291,13 @@ if (isset($_POST["save"])) {
     $holi = $_POST['startdate11'] ;
     $doit = "SELECT STR_TO_DATE('$holi','%m/%d/%Y') as holi1" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace1 = mysql_fetch_array($replace) ; 
+    $replace1 = mysqli_fetch_array($replace) ; 
     $replace1 = $replace1['holi1'] ;
     
     $holi2 = $_POST['startdate23'] ;
     $doit = "SELECT STR_TO_DATE('$holi2','%m/%d/%Y') as holi2" ;
     $replace = mysql_query($doit,$tryconnection) or die(mysql_error()) ;
-    $replace2 = mysql_fetch_array($replace) ;
+    $replace2 = mysqli_fetch_array($replace) ;
     $replace2 = $replace2['holi2'] ;
     $Upd_SQL = "UPDATE HOLIDAY SET OBSERVED = '$obs', HOLIDATE = '$replace1', NYDATE = '$replace2' WHERE HOLID = 12 LIMIT 1" ;
     $Update_it  = mysql_query($Upd_SQL, $tryconnection) or die(mysql_error()) ;

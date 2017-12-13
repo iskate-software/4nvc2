@@ -21,7 +21,7 @@ if (isset($_GET['changedoc'])) {
    echo ' For everything, New doctor is ' . $newdoc ;
    $oldunique = "SELECT UNIQUE1,DUTY FROM APPTDOCS WHERE DOCTOR = '$olddoc' AND DATEIS = '$effective_day' ORDER BY UNIQUE1 DESC LIMIT 1 " ;
    $get_old = mysql_query($oldunique, $tryconnection) or die(mysql_error()) ;
-   $query_old = mysql_fetch_assoc($get_old) ;
+   $query_old = mysqli_fetch_assoc($get_old) ;
    $row_doc_u = $query_old['UNIQUE1'] ;
    echo ' Unique is '  . $row_doc_u ;
    $row_doc_d = $query_old['DUTY'] ;
@@ -37,7 +37,7 @@ if (isset($_GET['changedoc'])) {
           $repl_query = "SELECT DOCTOR,SHORTDOC, DOCINIT, PRIORITY FROM DOCTOR WHERE SHORTDOC = '$newdoc' LIMIT 1" ;
           $get_rep_doc = mysql_query($repl_query, $tryconnection) or die(mysql_error()) ;
            echo ' did the query ' ;
-          $row_rep_doc = mysql_fetch_assoc($get_rep_doc) ;
+          $row_rep_doc = mysqli_fetch_assoc($get_rep_doc) ;
           $doctor = $row_rep_doc['DOCTOR'] ;
           $shortdoc = $row_rep_doc['SHORTDOC'] ;
           $initials = $row_rep_doc['DOCINIT'] ;
@@ -90,7 +90,7 @@ if (isset($_GET['changedoc'])) {
     echo ' Looking for it ' ;
     $original = "SELECT * FROM APPTDOCS WHERE UNIQUE1 = '$checkbox[1]' LIMIT 1 " ;
     $query_orig = mysql_query($original, $tryconnection) or die(mysql_error()) ;
-    $row_orig = mysql_fetch_assoc($query_orig) ;
+    $row_orig = mysqli_fetch_assoc($query_orig) ;
     $origduty = $row_orig['DUTY'] ;
     $origopen1 = $row_orig['OPEN1'] ;
     $origclose1 = $row_orig['CLOSE1'] ;
@@ -220,7 +220,7 @@ if (isset($_GET['changedoc'])) {
      
      // if the replacement doctor is not on that day, 
     
-              if (mysql_num_rows($ask) == 0) { 
+              if (mysqli_num_rows($ask) == 0) { 
                
                  echo ' not on today.. ' ; 
    
@@ -228,7 +228,7 @@ if (isset($_GET['changedoc'])) {
                  $newdoc = $_GET['replacement_doctor'] ;
                  $repl_query = "SELECT DOCTOR,SHORTDOC, DOCINIT, PRIORITY FROM DOCTOR WHERE SHORTDOC = '$newdoc' LIMIT 1" ;
                  $get_rep_doc = mysql_query($repl_query, $tryconnection) or die(mysql_error()) ;
-                 $row_rep_doc = mysql_fetch_assoc($get_rep_doc) ;
+                 $row_rep_doc = mysqli_fetch_assoc($get_rep_doc) ;
           
                  $doctor = $row_rep_doc['DOCTOR'] ;
                  $shortdoc = $row_rep_doc['SHORTDOC'] ;
@@ -269,7 +269,7 @@ if (isset($_GET['changedoc'])) {
                         echo ' New doc is working . ' ;
                         $ask = mysql_query($is_current, $tryconnection) or die(mysql_error()) ;
                         $newrec = 0;
-                        $row_current = mysql_fetch_assoc($ask) ;
+                        $row_current = mysqli_fetch_assoc($ask) ;
                         $replunique = $row_current['UNIQUE1'];
                         $repl_duty = $row_current['DUTY'];
  
@@ -306,7 +306,7 @@ if (isset($_GET['changedoc'])) {
                           if ($conflict == 0) { 
                           echo ' query was ' . $ask ;
                                     $ask = mysql_query($is_current, $tryconnection) or die(mysql_error()) ;
-                                    $query_a = mysql_fetch_assoc($ask) ;   
+                                    $query_a = mysqli_fetch_assoc($ask) ;   
                                     $oduty = $query_a['DUTY'] ;
                                     echo ' old duty was ' . $oduty ;
                                     $ounique = $query_a['UNIQUE1'] ;

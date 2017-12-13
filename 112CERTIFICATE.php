@@ -10,7 +10,7 @@ $psex=$_GET['psex'];
 
 $query_PATIENT = "SELECT DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST WHERE PETID = '$patient'";
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $pdob=$row_PATIENT['PDOB'];
 

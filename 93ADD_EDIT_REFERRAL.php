@@ -9,7 +9,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 if ($refid!='0'){
 $query_REFERRAL = "SELECT * FROM REFER WHERE REFID='$refid'";
 $REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
-$row_REFERRAL = mysql_fetch_assoc($REFERRAL);
+$row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 }
 
 

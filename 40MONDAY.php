@@ -21,7 +21,7 @@ $alphday = $weekarray[$day] ;
     $get_hours= mysql_query($workdays, $tryconnection) or die(mysql_error()) ;
     
     $open = array() ;
-    $get_rrow = mysql_fetch_assoc($get_hours) ;
+    $get_rrow = mysqli_fetch_assoc($get_hours) ;
     $open[0] = $get_rrow['STARTHOUR'] ;
     $open[1] = $get_rrow['STARTMIN'] ;
     $open[2] = $get_rrow['ENDHOUR'] ;

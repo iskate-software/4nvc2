@@ -6,11 +6,11 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$_SESSION[espatient]' LIMIT 1";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $query_RECEP = "SELECT PROBLEM FROM RECEP WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 
 
