@@ -4,26 +4,26 @@ require_once('../../tryconnection.php');
 
 $xtable = $_GET['xtable'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $select_RECALL = "SELECT *, DATE_FORMAT(PDOB, '%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT, '%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT, '%m/%d/%Y') AS POTHDAT, DATE_FORMAT(POTHFOR, '%m/%d/%Y') AS POTHFOR, DATE_FORMAT(POTH8, '%m/%d/%Y') AS POTH8 FROM $xtable ORDER BY COMPANY ASC";
-$RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($RECALL);
-$totalRows_RECALL = mysql_num_rows($RECALL);
+$RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($RECALL);
+$totalRows_RECALL = mysqli_num_rows($RECALL);
 
 if ($_GET['report']!='Display List'){
 
-$query_REPLOG="INSERT INTO REPLOG (TYPE, CLIENTSC, REPORT, SEARCH, PATIENTS) VALUES ('$xtable', 'All Clients', '$_GET[report]', '".mysql_real_escape_string($_GET['xsearch'])."', '$totalRows_RECALL')";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
+$query_REPLOG="INSERT INTO REPLOG (TYPE, CLIENTSC, REPORT, SEARCH, PATIENTS) VALUES ('$xtable', 'All Clients', '$_GET[report]', '".mysqli_real_escape_string($mysqli_link, $_GET['xsearch'])."', '$totalRows_RECALL')";
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
 }
 
 $query_CRITDATA = "SELECT * FROM CRITDATA";
-$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable' AND SUBTYPE='$_GET[xsubtype]'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -112,7 +112,7 @@ display:block;
     <tr>
       <td colspan="5"><hr size="1" color="#CCCCCC" style="margin:0px;"/></td>
     </tr>
- <?php } while ($row_RECALL = mysql_fetch_assoc($RECALL)); ?>   
+ <?php } while ($row_RECALL = mysqli_fetch_assoc($RECALL)); ?>   
     <tr>
       <td colspan="5">&nbsp;</td>
     </tr>
@@ -245,7 +245,7 @@ do { ?>
   </tr>
 </table>
   </div>
- <?php $i = $i+1; } while ($row_RECALL = mysql_fetch_assoc($RECALL)); 
+ <?php $i = $i+1; } while ($row_RECALL = mysqli_fetch_assoc($RECALL)); 
   } 
   
   
@@ -258,7 +258,7 @@ do { ?>
   $isare = 'is';
   
   echo "<span class='Verdana12'>".$row_RECALL['TITLE'].'", "'.$row_RECALL['CONTACT'].'", "'.$row_RECALL['COMPANY'].'", "'.$row_RECALL['ADDRESS1'].' '.$row_RECALL['ADDRESS2'].'", "'.$row_RECALL['CONTACT'].' '.$row_RECALL['COMPANY'].'", "'.$row_RECALL['CITY'].'", "'.$row_RECALL['STATE'].'", "'.$row_RECALL['ZIP'].'", "'.date('F jS Y').'", "'.$row_RECALL['PETNAME'].'", "'.$sex.'", "'.$row_RECALL['PHONE'].'", "'.$row_RECALL['PDOB'].'", "'.$row_RECALL['PETTYPE'].'", "'.$row_RECALL['PRABDAT'].'", "'.$isare.'", "'.$row_RECALL['POTHFOR'].'", "'.$row_RECALL['POTHDAT'].'", "'.$row_RECALL['CYCLE'].'", "'.$neuter.'", "'.$row_RECALL['POTH8']."</span><br />";
-	} while ($row_RECALL = mysql_fetch_assoc($RECALL));
+	} while ($row_RECALL = mysqli_fetch_assoc($RECALL));
 
 } //LATER TO USE fputcsv TO CREATE A FILE
 

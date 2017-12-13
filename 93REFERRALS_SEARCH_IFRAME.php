@@ -11,10 +11,10 @@ else {
 $sortby = REFVET;
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
-$query_REFERRAL = sprintf("SELECT * FROM REFER WHERE REFCLIN LIKE '%s' AND REFVET LIKE '%s' ORDER BY $sortby ASC", mysql_real_escape_string($refclin).'%', mysql_real_escape_string($refvet).'%');
-$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
-$row_REFERRAL = mysql_fetch_assoc($REFERRAL);
+mysqli_select_db($tryconnection, $database_tryconnection);
+$query_REFERRAL = sprintf("SELECT * FROM REFER WHERE REFCLIN LIKE '%s' AND REFVET LIKE '%s' ORDER BY $sortby ASC", mysqli_real_escape_string($mysqli_link, $refclin).'%', mysqli_real_escape_string($mysqli_link, $refvet).'%');
+$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
+$row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/IFRAME.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -84,7 +84,7 @@ function putInReferral(refvet,refclin,refid,tea)
    
    <?php do { ?> 
    
-   <tr class="Verdana12" id="<?php echo $row_REFERRAL['REFID']; ?>" onclick="putInReferral('<?php echo mysql_real_escape_string($row_REFERRAL['REFVET']); ?>, <?php echo mysql_real_escape_string($row_REFERRAL['REFVETFN']); ?>','<?php echo mysql_real_escape_string($row_REFERRAL['REFCLIN']); ?>','<?php echo $row_REFERRAL['REFID']; ?>',sessionStorage.tea);" onmouseover="document.getElementById(this.id).style.cursor='pointer';">
+   <tr class="Verdana12" id="<?php echo $row_REFERRAL['REFID']; ?>" onclick="putInReferral('<?php echo mysqli_real_escape_string($mysqli_link, $row_REFERRAL['REFVET']); ?>, <?php echo mysqli_real_escape_string($mysqli_link, $row_REFERRAL['REFVETFN']); ?>','<?php echo mysqli_real_escape_string($mysqli_link, $row_REFERRAL['REFCLIN']); ?>','<?php echo $row_REFERRAL['REFID']; ?>',sessionStorage.tea);" onmouseover="document.getElementById(this.id).style.cursor='pointer';">
      <td width="10"></td>
       <td width="140" valign="top"><?php echo $row_REFERRAL['REFVET']; ?>, <?php echo $row_REFERRAL['REFVETFN']; ?></td>
       <td width="250" height="15" align="left" valign="top">&nbsp;<?php echo $row_REFERRAL['REFCLIN']; ?></td>
@@ -92,7 +92,7 @@ function putInReferral(refvet,refclin,refid,tea)
       <td width="" align="left"><?php echo $row_REFERRAL['ADDRESS']; ?><br  /> <?php echo $row_REFERRAL['CITY']; ?><br  /> <?php echo $row_REFERRAL['ZIP']; ?></td>
    </tr>
     
-    <?php } while ($row_REFERRAL = mysql_fetch_assoc($REFERRAL)); ?>
+    <?php } while ($row_REFERRAL = mysqli_fetch_assoc($REFERRAL)); ?>
 </table>
 </div>
 

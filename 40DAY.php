@@ -74,13 +74,13 @@ switch ($d1) {
 
 session_start() ;
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // set up species abbrev table
 $species = array() ;
 $q_spec = "SELECT ABBREV FROM ANIMTYPE ORDER BY ANIMALID" ;
-$get_spec = mysql_query($q_spec, $tryconnection) or die(mysql_error()) ;
-while ($row_spec = mysql_fetch_assoc($get_spec)) {
+$get_spec = mysqli_query($tryconnection, $q_spec) or die(mysqli_error($mysqli_link)) ;
+while ($row_spec = mysqli_fetch_assoc($get_spec)) {
  $species[] = $row_spec['ABBREV'] ;
  }
 
@@ -133,8 +133,8 @@ $cal_day = strftime('%u',$mkcal) ;
 
 // Step 1  Pick the next 5 items out of HOSPHOURS.
 $query_param = "SELECT STARTHOUR,STARTMIN,ENDHOUR,ENDMIN,APPTTIME FROM HOSPHOURS WHERE DAY = $cal_day LIMIT 1 " ;
-$Get_param   = mysql_query($query_param, $tryconnection) or die(mysql_error()) ;
-$row_param   = mysql_fetch_assoc($Get_param) ;
+$Get_param   = mysqli_query($tryconnection, $query_param) or die(mysqli_error($mysqli_link)) ;
+$row_param   = mysqli_fetch_assoc($Get_param) ;
 $startahour  = $row_param['STARTHOUR'] ;
 $startamin   = $row_param['STARTMIN'] ;
 $endahour    = $row_param['ENDHOUR'] ;
@@ -156,7 +156,7 @@ $now = $startahour;
 
 
 $get_Appts = "SELECT APPTNUM, TIMEOF, DURATION,SHORTDOC,DOCREQ,NAME,CONTACT,NEWCL,PETNAME,RFPETTYPE,PSEX,NEWPET,PROBLEM FROM APPTS WHERE DATEOF = '$date_to_retrieve' AND CANCELLED = 0 ORDER BY SHORTDOC, TIMEOF" ;
-$query_Appts = mysql_query($get_Appts, $tryconnection) or die(mysql_error()) ;
+$query_Appts = mysqli_query($tryconnection, $get_Appts) or die(mysqli_error($mysqli_link)) ;
 
 $am = array() ; // Holds each appt line items. Key is APPTNUM
 $docassign = array() ; // Holds each doctor's name. Key is numeric, based on doctor sequence of appearance today. This is then
@@ -165,7 +165,7 @@ $docassign = array() ; // Holds each doctor's name. Key is numeric, based on doc
 $arraynum = 1 ; // Starting number for the array name into which each doctor's appts are placed. They each
 //                 have their own array, created as needed. Each array name is 'Doc' concatenated with this variable. e.g. Doc1, Doc2, etc.
 
-while ($row_Appts = mysql_fetch_assoc($query_Appts)) {
+while ($row_Appts = mysqli_fetch_assoc($query_Appts)) {
 $entries = 1 ;
 
   $key = array_search($row_Appts['SHORTDOC'],$docassign) ;
@@ -366,7 +366,7 @@ APPOINTMENT FLAGS by position in the DUTY field, and how they are depicted on th
 	 //  The assumptions are: The SEQ column is a proxy for "pecking order" within the clinic, (which can be over-ruled by the assignment of columns)
 	 //  and the DUTY field is all zeroes if they are not working.
 	 
-	 $APPTDOCS = mysql_query($query_APPTDOCS, $tryconnection) or die(mysql_error());
+	 $APPTDOCS = mysqli_query($tryconnection, $query_APPTDOCS) or die(mysqli_error($mysqli_link));
      $howmany = "SELECT FOUND_ROWS() AS IMAX" ;
      $mdocarray = array() ;
      $docarray  = array() ;
@@ -374,8 +374,8 @@ APPOINTMENT FLAGS by position in the DUTY field, and how they are depicted on th
      $dentarray = array() ;
      $larray    = array() ;
      $eslarray  = array() ;
-     $getmax = mysql_query($howmany, $tryconnection) or die(mysql_error()) ;
-     $max = mysql_fetch_assoc($getmax) ;
+     $getmax = mysqli_query($tryconnection, $howmany) or die(mysqli_error($mysqli_link)) ;
+     $max = mysqli_fetch_assoc($getmax) ;
 
      $lines = $max['IMAX'] - 1 ;   
 // There are four arrays associated with the doctor names array. They are the times and location for: appts,  surgery,  dentistry and large animal.
@@ -392,7 +392,7 @@ APPOINTMENT FLAGS by position in the DUTY field, and how they are depicted on th
      
      // and run the query again, as it has been superseded by the howmany..
      
-	 $APPTDOCS = mysql_query($query_APPTDOCS, $tryconnection) or die(mysql_error());
+	 $APPTDOCS = mysqli_query($tryconnection, $query_APPTDOCS) or die(mysqli_error($mysqli_link));
 	 
 	 // Set up a little tally to determine how many active columns there are before the tech column (small animal doctors).
 	 // Also, a count of how many large animal columns there are to be.
@@ -406,7 +406,7 @@ APPOINTMENT FLAGS by position in the DUTY field, and how they are depicted on th
    $docduty=array() ;
    $z = 0 ;
    
-	while ($row_APPTDOCS = mysql_fetch_assoc($APPTDOCS) ) {
+	while ($row_APPTDOCS = mysqli_fetch_assoc($APPTDOCS) ) {
 	      $chkduty[] = $row_APPTDOCS['SHORTDOC'] ;
 	      $docduty[] = $row_APPTDOCS['DUTY'] ;
 	      $z++ ;
@@ -437,8 +437,8 @@ APPOINTMENT FLAGS by position in the DUTY field, and how they are depicted on th
 */
  // Then run the query again as the index has been maxed.
 
-	$APPTDOCS = mysql_query($query_APPTDOCS, $tryconnection) or die(mysql_error());
-	while ($row_APPTDOCS = mysql_fetch_assoc($APPTDOCS) ) {
+	$APPTDOCS = mysqli_query($tryconnection, $query_APPTDOCS) or die(mysqli_error($mysqli_link));
+	while ($row_APPTDOCS = mysqli_fetch_assoc($APPTDOCS) ) {
 
             // This holds all doctors info, regardless of task.
             

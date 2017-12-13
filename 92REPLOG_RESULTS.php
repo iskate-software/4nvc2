@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!empty($_GET['startdate'])){
 $startdate=$_GET['startdate'];
@@ -11,10 +11,10 @@ else {
 $startdate='00/00/0000';
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -24,13 +24,13 @@ $enddate=date('m/d/Y');
 }
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
+$enddate=mysqli_fetch_array($enddate);
 
 
 $search_REPLOG="SELECT *, DATE_FORMAT(LOGDTE, '%m/%d/%Y') AS LOGDTE FROM REPLOG WHERE `TYPE`='$_SESSION[replog]' AND LOGDTE >= '$startdate[0]' AND LOGDTE <= '$enddate[0]' ORDER BY LOGDTE DESC";
-$REPLOG=mysql_query($search_REPLOG, $tryconnection ) or die(mysql_error());
-$row_REPLOG=mysql_fetch_assoc($REPLOG);
+$REPLOG=mysqli_query($tryconnection, $search_REPLOG) or die(mysqli_error($mysqli_link));
+$row_REPLOG=mysqli_fetch_assoc($REPLOG);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -230,7 +230,7 @@ document.getElementById(y).style.backgroundColor="#FFFFFF";
   </tr>';
   $i = $i+1;
   }
-  while ($row_REPLOG=mysql_fetch_assoc($REPLOG));
+  while ($row_REPLOG=mysqli_fetch_assoc($REPLOG));
   ?>
 </table>
     </div>    </td>

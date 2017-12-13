@@ -11,10 +11,10 @@ $_SESSION['espatient']=$_SESSION['patient'];
 }
 
 ///////////////////////////////// PATIENT ////////////////////////////////////
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PDEADATE,'%m/%d/%Y') AS PDEADATE FROM PETMAST WHERE PETID = '$_SESSION[espatient]' LIMIT 1";
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $psex=$row_PATIENT['PSEX'];
 

@@ -1,7 +1,7 @@
 <?php
 require_once('../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 
 if ($_GET['month'] > 12){
@@ -30,17 +30,17 @@ $longname = array() ;
 $shortname = array() ;
 $nyhol = array() ;
 $Get_all="SELECT HOLIDATE,HOLIDAY,NYDATE,SHORTHOL FROM HOLIDAY WHERE OBSERVED = 1" ;
-$get_holidays=mysql_query($Get_all, $tryconnection) or die(mysql_error()) ;
+$get_holidays=mysqli_query($tryconnection, $Get_all) or die(mysqli_error($mysqli_link)) ;
 
 $howmany = "SELECT FOUND_ROWS() AS IMAX" ;
-$getmax = mysql_query($howmany, $tryconnection) or die(mysql_error()) ;
-$max = mysql_fetch_assoc($getmax) ;
+$getmax = mysqli_query($tryconnection, $howmany) or die(mysqli_error($mysqli_link)) ;
+$max = mysqli_fetch_assoc($getmax) ;
 
 $lines = $max['IMAX'] - 1 ;
  
 for ($i = 0; $i<=$lines; $i++) {
  
- $get_det = mysql_fetch_assoc($get_holidays) ;
+ $get_det = mysqli_fetch_assoc($get_holidays) ;
  $holidays[$i] = $get_det['HOLIDATE'];
  $longname[$i] =  $get_det['HOLIDAY'] ;
  $shortname[$i] =  $get_det['SHORTHOL'] ;
@@ -167,9 +167,9 @@ sessionStorage.setItem('cancel',document.location);
 				     $date_to_retrieve = $year.'-'.$month.'-'.$day_of_month;
 				
 				     $query_APPTDOCS = "SELECT * FROM APPTDOCS WHERE `DATEIS`='$date_to_retrieve' AND DUTY <> '00000000000000' ORDER BY SEQ";
-				     $APPTDOCS = mysql_query($query_APPTDOCS, $tryconnection) or die(mysql_error());
+				     $APPTDOCS = mysqli_query($tryconnection, $query_APPTDOCS) or die(mysqli_error($mysqli_link));
 //				     $row_APPTDOCS = mysql_fetch_assoc($APPTDOCS);
-				     $totalRows_APPTDOCS = mysql_num_rows($APPTDOCS);			
+				     $totalRows_APPTDOCS = mysqli_num_rows($APPTDOCS);			
 
 /* 
 APPOINTMENT FLAGS
@@ -191,7 +191,7 @@ APPOINTMENT FLAGS
 */
 				
 				   echo '<table width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#E1E1E1" frame="box" rules="all"   id="'.$day_of_month.'" onmouseover="CursorToPointer(this.id)" onclick="document.location=\'DAY.php?year='.$year.'&month='.$month.'&day='.$day_of_month.'&inc=0'.'\'">';
-				   while ($row_APPTDOCS = mysql_fetch_assoc($APPTDOCS)) {echo 
+				   while ($row_APPTDOCS = mysqli_fetch_assoc($APPTDOCS)) {echo 
 						'<tr class="Verdana9">  
 						  <td height="9" width="20" align="center" class="Verdana9Red">';
 				

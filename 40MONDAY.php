@@ -1,7 +1,7 @@
 <?php
 
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!isset($_POST["save"])) {
 $weekarray[0] = 'Monday' ;
@@ -18,10 +18,10 @@ $dayx = $_GET['day'] +1 ;
 $alphday = $weekarray[$day] ;
 
     $workdays = "SELECT STARTHOUR,STARTMIN,ENDHOUR,ENDMIN,APPTTIME FROM HOSPHOURS WHERE DAY = '$dayx' LIMIT 1" ;
-    $get_hours= mysql_query($workdays, $tryconnection) or die(mysql_error()) ;
+    $get_hours= mysqli_query($tryconnection, $workdays) or die(mysqli_error($mysqli_link)) ;
     
     $open = array() ;
-    $get_rrow = mysql_fetch_assoc($get_hours) ;
+    $get_rrow = mysqli_fetch_assoc($get_hours) ;
     $open[0] = $get_rrow['STARTHOUR'] ;
     $open[1] = $get_rrow['STARTMIN'] ;
     $open[2] = $get_rrow['ENDHOUR'] ;
@@ -38,7 +38,7 @@ $endh   = $_POST['ehours'] ;
 $endm   = $_POST['emins'] ;
 $dur    = $_POST['duration'] ;
 $UpdHours = "UPDATE HOSPHOURS SET STARTHOUR = '$starth', STARTMIN = '$startm', ENDHOUR = '$endh', ENDMIN = '$endm', APPTTIME = '$dur' WHERE DAY = '$dayx' LIMIT 1" ;
-$doSQL    = mysql_query($UpdHours, $tryconnection) or die(mysql_error()) ;
+$doSQL    = mysqli_query($tryconnection, $UpdHours) or die(mysqli_error($mysqli_link)) ;
 header("Location: ../APPOINTMENTS/HOURS.php");
 }
    

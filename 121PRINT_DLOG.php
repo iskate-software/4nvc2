@@ -84,11 +84,11 @@ elseif (isset($_SESSION['hospital_patient']) || !empty($_GET['hospital_patient']
 
 /////////////////////////////////////
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_DLOG = "SELECT *, DATE_FORMAT(CREDATE, '%m/%d/%Y $timeformat') AS CREDATE, DATE_FORMAT(TDATE, '%m/%d/%Y') AS TDATE, DATE_FORMAT(TTIME, '$timeformat') AS TTIME FROM TICKLER ".$left." JOIN  PETMAST ON (PETMAST.PETID=TICKLER.DLPETID AND PETMAST.PETNAME LIKE '$petname%') WHERE TICKLER.CREDATE LIKE '$credate%' AND TICKLER.TDATE LIKE '$tdate%' AND TICKLER.ENTEREDBY LIKE '$enteredby%' AND TICKLER.WHOTODO LIKE '$whotodo%' ".$hospital_patient." ORDER BY ".$sortby." ASC";
-$DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
-$totalRows_DLOG = mysql_num_rows($DLOG);
+$DLOG = mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
+$row_DLOG = mysqli_fetch_assoc($DLOG);
+$totalRows_DLOG = mysqli_num_rows($DLOG);
 
 
 /////////////////////////////////////////
@@ -254,7 +254,7 @@ body {
                         <td width="29" align="center" valign="middle"></td>
                         <td align="center" valign="middle"><input type="checkbox" name="complete[]" id="complete" value="<?php echo $row_DLOG['DUTYLOGID']; ?>" title="Tick to mark completed duties and click SAVE"/></td>
                   </tr>
-                  <?php } while ($row_DLOG = mysql_fetch_assoc($DLOG)); ?>
+                  <?php } while ($row_DLOG = mysqli_fetch_assoc($DLOG)); ?>
 				</table>
             </div>
         </td>
@@ -265,5 +265,5 @@ body {
 </body>
 </html>
 <?php
-mysql_free_result($DLOG);
+mysqli_free_result($DLOG);
 ?>

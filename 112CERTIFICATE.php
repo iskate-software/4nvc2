@@ -3,14 +3,14 @@ session_start();
 require_once('../../tryconnection.php');
 include("../../ASSETS/age.php");
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
 $psex=$_GET['psex'];
 
 $query_PATIENT = "SELECT DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST WHERE PETID = '$patient'";
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $pdob=$row_PATIENT['PDOB'];
 

@@ -1,13 +1,13 @@
 <?php 
 session_start();
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 // At the beginning....
 if (!isset($_POST["save"])) {
 $query_Doctor = "SELECT * FROM DOCTOR WHERE INSTR(DOCTOR,'DVM') <> 0 OR INSTR(DOCTOR,'Dr.') <> 0 OR INSTR(DOCTOR,'D.V.M.') <> 0 ORDER BY PRIORITY";
-$Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
-$row_Doctor = mysql_fetch_assoc($Doctor);
-$totalRows_Doctor = mysql_num_rows($Doctor);
+$Doctor = mysqli_query($tryconnection, $query_Doctor) or die(mysqli_error($mysqli_link));
+$row_Doctor = mysqli_fetch_assoc($Doctor);
+$totalRows_Doctor = mysqli_num_rows($Doctor);
 
 $_POST['dayof'] = 0 ;
 /*
@@ -165,7 +165,7 @@ do {
 ?>
       <option value="<?php echo $row_Doctor['DOCTOR']?>" ><?php echo $row_Doctor['DOCTOR']?></option>
       <?php
-} while ($row_Doctor = mysql_fetch_assoc($Doctor));
+} while ($row_Doctor = mysqli_fetch_assoc($Doctor));
 ?>
     </select></td>
     <td width="1%">&nbsp;</td>

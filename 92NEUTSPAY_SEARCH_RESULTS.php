@@ -2,19 +2,19 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $startdate=$_POST['startdate'];
 
 $startdate="SELECT STR_TO_DATE('$startdate','%c/%e/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
+$startdate=mysqli_fetch_array($startdate);
 
 $enddate=$_POST['enddate'];
 
 $enddate="SELECT STR_TO_DATE('$enddate','%c/%e/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
+$enddate=mysqli_fetch_array($enddate);
 
 
 if (!empty($_POST['species'])){
@@ -52,7 +52,7 @@ if (isset($_SESSION['newtable'])){
 $xtable = $_SESSION['newtable'];
 
 $query_RECALL = "TRUNCATE TABLE $xtable";
-$RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+$RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
 
 $query_RECALL = "INSERT INTO $xtable (PETID, CUSTNO, PETNAME, PETTYPE, PETBREED, PCOLOUR, PSEX, PNEUTER, PDOB, PRABDAT, POTHDAT, POTHFOR, POTH8, TITLE, CONTACT, COMPANY, ADDRESS1, ADDRESS2, CITY, STATE, ZIP, 
 CAREA, CAREA2, PHONE, PHONE2, CYCLE) 
@@ -60,34 +60,34 @@ SELECT PETMAST.PETID, PETMAST.CUSTNO, PETMAST.PETNAME, PETMAST.PETTYPE, PETMAST.
 PETMAST.POTH8, ARCUSTO.TITLE, ARCUSTO.CONTACT, ARCUSTO.COMPANY, ARCUSTO.ADDRESS1, ARCUSTO.ADDRESS2, ARCUSTO.CITY, ARCUSTO.STATE, ARCUSTO.ZIP, ARCUSTO.CAREA, ARCUSTO.CAREA2, ARCUSTO.PHONE, ARCUSTO.PHONE2, 
 PETMAST.PVACOUNT FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO = PETMAST.CUSTNO) WHERE ARCUSTO.INACTIVE <> 1 AND PDOB >= '$startdate[0]' AND PDOB < '$enddate[0]' AND PNEUTER <> 1 
 AND (PETMAST.PDEAD + PETMAST.PMOVED = 0) AND INSTR(UPPER(PETMAST.PDATA),'NO REM') = 0  AND INSTR(UPPER(ARCUSTO.COMMENT),'NO REM') = 0 AND (".$species.") $skipref $namerange";
-$RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+$RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
 
 $select_RECALL = "SELECT * FROM $xtable";
-$select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($select_RECALL);
-$totalRows_RECALL = mysql_num_rows($select_RECALL);
+$select_RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($select_RECALL);
+$totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
 
 else {
 $xtable = $_SESSION['oldtable'];
 $select_RECALL = "SELECT * FROM $xtable";
-$select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($select_RECALL);
-$totalRows_RECALL = mysql_num_rows($select_RECALL);
+$select_RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($select_RECALL);
+$totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
 
 
 $query_REPLOG = "SELECT * FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC LIMIT 1";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
-$row_REPLOG = mysql_fetch_assoc($REPLOG);
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
+$row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if ($xtable == 'NEUTSPAY') {
-$xsearch = mysql_real_escape_string("Eligible for neuter/spay");
+$xsearch = mysqli_real_escape_string($mysqli_link, "Eligible for neuter/spay");
 }
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -267,7 +267,7 @@ var report=document.search_results.report;
                 <td width="10" height="30">&nbsp;</td>
                 <td><label title="<?php echo $row_POSTCARDS['MESSAGE']; ?>"><input type="radio" name="xsubtype" value="<?php echo $row_POSTCARDS['SUBTYPE']; ?>"/> <?php echo $row_POSTCARDS['SUBTYPE']; ?></label></td>
               </tr>
-              <?php } while ($row_POSTCARDS = mysql_fetch_assoc($POSTCARDS)); ?>
+              <?php } while ($row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS)); ?>
             </table>
         </div>
         </td>

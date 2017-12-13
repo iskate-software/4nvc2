@@ -2,7 +2,7 @@
 session_start();
 
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // On the way out of the detailed doctor's hours page..
 
@@ -86,8 +86,8 @@ $weekday = $_SESSION['weekday'] ;
         }
         
         $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS START";
-        $startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-        $get_startdate=mysql_fetch_assoc($startdate2);
+        $startdate2=mysqli_query($tryconnection, $startdate1) or die(mysqli_error($mysqli_link));
+        $get_startdate=mysqli_fetch_assoc($startdate2);
         $startdate = $get_startdate['START'] ;
 
         
@@ -99,9 +99,9 @@ $weekday = $_SESSION['weekday'] ;
         }
 
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS END";
-$enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
+$enddate2=mysqli_query($tryconnection, $enddate1) or die(mysqli_error($mysqli_link));
 
-$get_enddate=mysql_fetch_assoc($enddate2);
+$get_enddate=mysqli_fetch_assoc($enddate2);
 $enddate = $get_enddate['END'] ;
 
   
@@ -111,13 +111,13 @@ $endcf = $_SESSION['endcf'] ;
 //echo ' Coming out endcf is '.$endcf ;
  
 $begin_cvt = "SELECT STR_TO_DATE('$begincf','%m/%d/%Y') AS BEGINCF" ;
-$begin_cvt2 = mysql_query($begin_cvt, $tryconnection) or die(mysql_error());
-$get_begcv = mysql_fetch_assoc($begin_cvt2);
+$begin_cvt2 = mysqli_query($tryconnection, $begin_cvt) or die(mysqli_error($mysqli_link));
+$get_begcv = mysqli_fetch_assoc($begin_cvt2);
 $begincf = $get_begcv['BEGINCF'] ; 
 
 $end_cvt = "SELECT STR_TO_DATE('$endcf','%m/%d/%Y') AS ENDCF" ;
-$end_cvt2 = mysql_query($end_cvt, $tryconnection) or die(mysql_error());
-$get_endcv = mysql_fetch_assoc($end_cvt2);
+$end_cvt2 = mysqli_query($tryconnection, $end_cvt) or die(mysqli_error($mysqli_link));
+$get_endcv = mysqli_fetch_assoc($end_cvt2);
 $endcf = $get_endcv['ENDCF'] ;
 //echo ' after conversion, ' . $endcf ;
 
@@ -182,10 +182,10 @@ $endcf = $get_endcv['ENDCF'] ;
         
            $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$startdate', '$enddate', '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]' )" ;
-           $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+           $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
 
            // and generate the daily records, AFTER deleting any which were there before.
            
@@ -202,8 +202,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
  
  
@@ -214,33 +214,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ; 
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -254,22 +254,22 @@ $endcf = $get_endcv['ENDCF'] ;
        // The new ending date on the existing record will be one day before new start date.
        
          $new_end = "SELECT DATE_SUB('$startdate', INTERVAL 1 DAY) AS NEWEND " ;
-         $get_it = mysql_query($new_end, $tryconnection) or die(mysql_error()) ;
-         $row_newend = mysql_fetch_assoc($get_it) ;
+         $get_it = mysqli_query($tryconnection, $new_end) or die(mysqli_error($mysqli_link)) ;
+         $row_newend = mysqli_fetch_assoc($get_it) ;
          $new_ending = $row_newend['NEWEND'] ;
        
        // The existing record is changed to run from the old start date to the new begin date minus one day.
        
          $update_firstpart = "UPDATE HRSDOC SET ENDDT = '$new_ending' WHERE HRSID = '$_SESSION[hrsid]'" ;
-         $write_it = mysql_query($update_firstpart, $tryconnection) or die(mysql_error()) ;
+         $write_it = mysqli_query($tryconnection, $update_firstpart) or die(mysqli_error($mysqli_link)) ;
        
        // The new slice inserted into the range is from the new start date to the new end date 
           $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$startdate', '$enddate', '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]' )" ;
-          $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+          $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
           
         // and generate the daily records, AFTER deleting any which were there before.
         
@@ -285,8 +285,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -297,33 +297,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ;
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -331,14 +331,14 @@ $endcf = $get_endcv['ENDCF'] ;
        // Finally, the new start date on the replicated stub will be one week after the new end date. 
        
          $new_start = "SELECT DATE_ADD('$enddate', INTERVAL 1 WEEK) AS NEWSTART " ;
-         $get_it = mysql_query($new_start, $tryconnection) or die(mysql_error()) ;
-         $row_newstart = mysql_fetch_assoc($get_it) ;
+         $get_it = mysqli_query($tryconnection, $new_start) or die(mysqli_error($mysqli_link)) ;
+         $row_newstart = mysqli_fetch_assoc($get_it) ;
          $new_starting = $row_newstart['NEWSTART'] ;
        
          $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$new_starting', '$endcf', '$sequence', '$weekday[2]', '$weekday[3]', '$weekday[4]', '$weekday[5]', '$weekday[6]', '$weekday[7]', '$weekday[8]' )" ;
-         $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+         $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
        } // ($startdate > $beginccf && enddate < $endcf) Case 3
        
        ///////////////////////// Case 4 //////////////////////////////////////////
@@ -350,22 +350,22 @@ $endcf = $get_endcv['ENDCF'] ;
        echo ' Case 4.. ' ;  
        
        $new_end = "SELECT DATE_SUB('$startdate', INTERVAL 1 DAY) AS NEWEND " ;
-         $get_it = mysql_query($new_end, $tryconnection) or die(mysql_error()) ;
-         $row_newend = mysql_fetch_assoc($get_it) ;
+         $get_it = mysqli_query($tryconnection, $new_end) or die(mysqli_error($mysqli_link)) ;
+         $row_newend = mysqli_fetch_assoc($get_it) ;
          $new_ending = $row_newend['NEWEND'] ;
        
        // The existing record is changed to run from the old start date to the new begin date minus one day.
        
          $update_firstpart = "UPDATE HRSDOC SET ENDDT = '$new_ending' WHERE HRSID = '$_SESSION[hrsid]'" ;
-         $write_it = mysql_query($update_firstpart, $tryconnection) or die(mysql_error()) ;
+         $write_it = mysqli_query($tryconnection, $update_firstpart) or die(mysqli_error($mysqli_link)) ;
        
        // The new slice inserted into the range is from the new start date to the new end date 
         $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$startdate', '$enddate', '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]' )" ;
-          $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+          $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
                   // and generate the daily records, AFTER deleting any which were there before.
         
                      $target = $startdate ;
@@ -380,8 +380,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -392,33 +392,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ;
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -433,10 +433,10 @@ $endcf = $get_endcv['ENDCF'] ;
        
            $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$startdate', '$enddate', '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]' )" ;
-          $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+          $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
             
           $target = $startdate ;
            
@@ -450,8 +450,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -462,33 +462,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ; 
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
            }  // while ($target <= $enddate) ;
@@ -502,22 +502,22 @@ $endcf = $get_endcv['ENDCF'] ;
        
            $insert_new = "INSERT INTO HRSDOC (DOCTOR, SHORTDOC, INITIALS, DAYINWEEK, STARTDT, ENDDT, SEQUENCE, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                VALUES ('".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                VALUES ('".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$day', '$startdate', '$enddate', '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]' )" ;
                 
-          $write_it = mysql_query($insert_new, $tryconnection) or die(mysql_error()) ;
+          $write_it = mysqli_query($tryconnection, $insert_new) or die(mysqli_error($mysqli_link)) ;
           
          $new_start = "SELECT DATE_ADD('$enddate', INTERVAL 1 DAY) AS NEWSTART " ;
-         $get_it = mysql_query($new_start, $tryconnection) or die(mysql_error()) ;
-         $row_newstart = mysql_fetch_assoc($get_it) ;
+         $get_it = mysqli_query($tryconnection, $new_start) or die(mysqli_error($mysqli_link)) ;
+         $row_newstart = mysqli_fetch_assoc($get_it) ;
          $new_starting = $row_newstart['NEWSTART'] ;
        
        // The existing record is changed to run starting from the new ending date plus one day to the old ending date .
       
         
          $update_secpart = "UPDATE HRSDOC SET STARTDT = '$new_starting' WHERE HRSID = '$_SESSION[hrsid]'" ;
-         $write_it = mysql_query($update_secpart, $tryconnection) or die(mysql_error()) ;
+         $write_it = mysqli_query($tryconnection, $update_secpart) or die(mysqli_error($mysqli_link)) ;
        
             
           $target = $startdate ;    
@@ -532,8 +532,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -544,33 +544,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ;
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
         	} // ($target <= $enddate)
@@ -581,7 +581,7 @@ $endcf = $get_endcv['ENDCF'] ;
        if ($startdate == $begincf && $enddate == $endcf) {  // Case 7
        
         $update_duties = "UPDATE HRSDOC SET DUTY = '$duty' WHERE HRSID = '$_SESSION[hrsid]'" ;
-         $write_it = mysql_query($update_duties, $tryconnection) or die(mysql_error()) ;
+         $write_it = mysqli_query($tryconnection, $update_duties) or die(mysqli_error($mysqli_link)) ;
          
                      
           $target = $startdate ;    
@@ -596,8 +596,8 @@ $endcf = $get_endcv['ENDCF'] ;
 // First, the day of the week check
 
                $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               $get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               $row_dow = mysql_fetch_assoc($get_it) ;
+               $get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               $row_dow = mysqli_fetch_assoc($get_it) ;
                $dayofweek = $row_dow['DOW'] ;  
                
  
@@ -608,33 +608,33 @@ $endcf = $get_endcv['ENDCF'] ;
 
 	// try good 'ol MySQL
                                 $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 DAY) AS NEXTDAY " ;
-                                $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-                                $row_Date = mysql_fetch_assoc($get_it) ;
+                                $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+                                $row_Date = mysqli_fetch_assoc($get_it) ;
                                 $target = $row_Date['NEXTDAY'] ;
                                 
                     
                                 $get_dow = "SELECT DAYOFWEEK('$target') AS DOW" ;
-               					$get_it = mysql_query($get_dow, $tryconnection) or die(mysql_error()) ;
-               					$row_dow = mysql_fetch_assoc($get_it) ;
+               					$get_it = mysqli_query($tryconnection, $get_dow) or die(mysqli_error($mysqli_link)) ;
+               					$row_dow = mysqli_fetch_assoc($get_it) ;
                					$dayofweek = $row_dow['DOW'] ;
                					
                        } //while ((round($day,0))  <> round($convert[$dayofweek],00 ) )
 
            
            $delete_old = "DELETE FROM APPTDOCS WHERE DOCTOR = '$doctor' AND DATEIS = '$target' " ;
-           $trash_it = mysql_query($delete_old, $tryconnection) or die(mysql_error()) ;
+           $trash_it = mysqli_query($tryconnection, $delete_old) or die(mysqli_error($mysqli_link)) ;
            
            $insert_details = "INSERT INTO APPTDOCS (DATEIS, DOCTOR, SHORTDOC, INITIALS, SEQ, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY,
                           ES1ST,ES1SP, ES1BST,ES1BSP, ES2ST,ES2SP, ES2BST,ES2BSP, ES3ST,ES3SP, ES3BST,ES3BSP)
-                 VALUES ('$target', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."',
+                 VALUES ('$target', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."',
                 '$sequence', '$weekday2[2]', '$weekday2[3]', '$weekday2[4]', '$weekday2[5]', '$weekday2[6]', '$weekday2[7]', '$duty',
                 '$eslots2[0]','$eslots2[1]','$eslots2[2]','$eslots2[3]','$eslots2[4]','$eslots2[5]','$eslots2[6]','$eslots2[7]','$eslots2[8]','$eslots2[9]','$eslots2[10]','$eslots2[11]'  )" ;
-           $add_it = mysql_query($insert_details, $tryconnection) or die(mysql_error())  ;
+           $add_it = mysqli_query($tryconnection, $insert_details) or die(mysqli_error($mysqli_link))  ;
          
            // Add a week, and try again.
                $bump_it = "SELECT DATE_ADD('$target', INTERVAL 1 WEEK) AS NEXTWEEK " ;
-               $get_it  = mysql_query($bump_it, $tryconnection) or die(mysql_error()) ;
-               $_rowDate = mysql_fetch_assoc($get_it) ;
+               $get_it  = mysqli_query($tryconnection, $bump_it) or die(mysqli_error($mysqli_link)) ;
+               $_rowDate = mysqli_fetch_assoc($get_it) ;
                $target = $_rowDate['NEXTWEEK'] ;
                
         	} // ($target <= $enddate)

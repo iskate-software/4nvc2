@@ -110,11 +110,11 @@ $sortby = $_SESSION['sortingdlog']  . ',DUTYLOGID';
 
 /////////////////////////////////////
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_DLOG = "SELECT *, DATE_FORMAT(CREDATE, '%m/%d/%Y $timeformat') AS CREDATE, DATE_FORMAT(TDATE, '%m/%d/%Y') AS TDATE, DATE_FORMAT(TTIME, '$timeformat') AS TTIME FROM TICKLER ".$left." JOIN  PETMAST ON (PETMAST.PETID=TICKLER.DLPETID AND PETMAST.PETNAME LIKE '$petname%') ".$left2." JOIN ARCUSTO ON (ARCUSTO.CUSTNO=TICKLER.CUSTNO AND ARCUSTO.COMPANY LIKE '$company%'AND ARCUSTO.CONTACT LIKE '$contact%')  WHERE TICKLER.TDATE <= NOW() AND TICKLER.CREDATE LIKE '$credate%' AND TICKLER.TDATE LIKE '$tdate%' AND TICKLER.ENTEREDBY LIKE '$enteredby%' AND TICKLER.WHOTODO LIKE '$whotodo%' ".$hospital_patient." ORDER BY ".$sortby." ASC";
-$DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
-$totalRows_DLOG = mysql_num_rows($DLOG);
+$DLOG = mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
+$row_DLOG = mysqli_fetch_assoc($DLOG);
+$totalRows_DLOG = mysqli_num_rows($DLOG);
 
 
 /////////////////////////////////////////
@@ -124,27 +124,27 @@ $delete=$_POST['complete'];
 
 	foreach ($delete as $value){
 	$query_recur="SELECT RECUR, DAYS, TDATE FROM TICKLER WHERE DUTYLOGID=".$value;
-	$recur = mysql_query($query_recur, $tryconnection) or die(mysql_error());
-	$row_recur = mysql_fetch_assoc($recur);
+	$recur = mysqli_query($tryconnection, $query_recur) or die(mysqli_error($mysqli_link));
+	$row_recur = mysqli_fetch_assoc($recur);
 
 	$query_archivedlog="INSERT INTO TICKLERARCHIVE (DUTYLOGID, CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE) SELECT DUTYLOGID, CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE FROM TICKLER WHERE DUTYLOGID=".$value;
-	$archivedlog = mysql_query($query_archivedlog, $tryconnection) or die(mysql_error());
+	$archivedlog = mysqli_query($tryconnection, $query_archivedlog) or die(mysqli_error($mysqli_link));
 	
 	//STATUS D = DELETED, STATUS C = COMPLETED
 	$query_status="UPDATE TICKLERARCHIVE SET STATUS='C', STATUSDATE=NOW() WHERE TDATE='$row_recur[TDATE]' AND  DUTYLOGID=".$value;
-	$status=mysql_query($query_status, $tryconnection) or die(mysql_error());
+	$status=mysqli_query($tryconnection, $query_status) or die(mysqli_error($mysqli_link));
 	
 	
 		if ($row_recur['RECUR']=="1"){
 		$oldtdate=$row_recur['TDATE'];
 		$days=$row_recur['DAYS'];
 		$query_recuring="UPDATE TICKLER SET TDATE=DATE_ADD('$oldtdate', INTERVAL '$days' DAY) WHERE DUTYLOGID=".$value;
-		$recuring = mysql_query($query_recuring, $tryconnection) or die(mysql_error());
+		$recuring = mysqli_query($tryconnection, $query_recuring) or die(mysqli_error($mysqli_link));
 }
 		
 		else {
 		$query_deletedlog = "DELETE FROM TICKLER WHERE DUTYLOGID=".$value;
-		$deletedlog = mysql_query($query_deletedlog, $tryconnection) or die(mysql_error());
+		$deletedlog = mysqli_query($tryconnection, $query_deletedlog) or die(mysqli_error($mysqli_link));
 	}
 	}
 header("Location: DUTY_LOG.php");
@@ -401,7 +401,7 @@ window.open('../../PATIENT/PATIENT_DETAIL.php?dutylogid='+dlid+'&patient='+petid
                         <td width="29" align="center" valign="middle"><img src="../../IMAGES/h copy.jpg" alt="h" id="<?php echo $row_DLOG['DLPETID']; ?>" width="28" height="28" onmouseover="CursorToPointer(this.id)" title="Click to enter medical history" onclick="window.open('../../PATIENT/HISTORY/REVIEW_HISTORY.php?client=<?php echo $row_DLOG['CUSTNO']; ?>&patient=<?php echo $row_DLOG['DLPETID']; ?>&dutylog=&path=3close','_blank','width=785,height=670')" <?php if ($row_DLOG['DLPETID']==0){echo "style='display:none'";}?>/></td>
                     <td align="center" valign="middle"><input type="checkbox" name="complete[]" id="complete2" value="<?php echo $row_DLOG['DUTYLOGID']; ?>" title="Tick to mark completed duties and click SAVE" <?php if ($row_DLOG['DUTYLOGID']==0){echo "style='display:none'";}?>/></td>
                   </tr>
-                  <?php } while ($row_DLOG = mysql_fetch_assoc($DLOG)); ?>
+                  <?php } while ($row_DLOG = mysqli_fetch_assoc($DLOG)); ?>
 				</table>     
           </div>
 		</td>

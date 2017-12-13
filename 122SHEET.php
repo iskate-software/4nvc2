@@ -7,57 +7,57 @@ session_start();
 require_once('../../tryconnection.php');
 include("../../ASSETS/age.php");
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$_SESSION[espatient]' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $custno = $row_PATIENT_CLIENT['CUSTNO'] ;
 
 $query_SEC_INDEX = "SELECT FNAME,LNAME FROM SECINDEX WHERE SECINDEX.CUSTNO = '$custno' " ;
-$SEC_INDEX = mysql_query($query_SEC_INDEX, $tryconnection) or die(mysql_error()) ;
-$row_SEC_INDEX = mysql_fetch_assoc($SEC_INDEX) ;
+$SEC_INDEX = mysqli_query($tryconnection, $query_SEC_INDEX) or die(mysqli_error($mysqli_link)) ;
+$row_SEC_INDEX = mysqli_fetch_assoc($SEC_INDEX) ;
 
 
 $query_SPECIES = "SELECT ANIMAL FROM ANIMTYPE WHERE ANIMALID = '$row_PATIENT_CLIENT[PETTYPE]' LIMIT 1 " ;
-$IS_SPECIES = mysql_query($query_SPECIES, $tryconnection) or die(mysql_error()) ;
-$species = mysql_fetch_array($IS_SPECIES) ;
+$IS_SPECIES = mysqli_query($tryconnection, $query_SPECIES) or die(mysqli_error($mysqli_link)) ;
+$species = mysqli_fetch_array($IS_SPECIES) ;
 
 $query_PATIENTS = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT,'%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT,'%m/%d/%Y') AS POTHDAT, DATE_FORMAT(PLEUKDAT,'%m/%d/%Y') AS PLEUKDAT FROM PETMAST WHERE CUSTNO='$row_PATIENT_CLIENT[CUSTNO]' AND (PDEAD + PMOVED ) = 0 ORDER BY PETNAME ASC";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
-$row_PATIENTS = mysql_fetch_assoc($PATIENTS);
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
+$row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 $query_CRITDATA = "SELECT * FROM CRITDATA LIMIT 1";
-$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_RECEP = "SELECT PROBLEM FROM RECEP WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 $tspecies = $row_PATIENT_CLIENT[PETTYPE] ;
 
 $numrows="SELECT COUNT(TNOPRINT) AS RECORDS FROM VETCAN WHERE TSPECIES = '$tspecies' AND TNOPRINT = 1 " ;
-$num_query = mysql_query($numrows, $tryconnection) or die(mysql_error()) ;
-$row_numrows = mysql_fetch_assoc($num_query);
+$num_query = mysqli_query($tryconnection, $numrows) or die(mysqli_error($mysqli_link)) ;
+$row_numrows = mysqli_fetch_assoc($num_query);
 
 $limit = $row_numrows['RECORDS'] ;
 
 $TNFGET = "SELECT TCATGRY,TTYPE,TNO,TWDESCR FROM VETCAN WHERE TSPECIES = '$tspecies' AND TNOPRINT = 1 ORDER BY TCATGRY, TNO " ;
-$TNF_query = mysql_query($TNFGET, $tryconnection) or die(mysql_error()) ;
+$TNF_query = mysqli_query($tryconnection, $TNFGET) or die(mysqli_error($mysqli_link)) ;
 
 if (empty($row_RECEP)){
 $query_insertSQL="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME) 
-               VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysql_real_escape_string($row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$row_PATIENT_CLIENT[PETTYPE]', '1', 
-                       '".mysql_real_escape_string($row_PATIENT_CLIENT['PETBREED'])."','".mysql_real_escape_string($row_PATIENT_CLIENT['CONTACT'])."','".mysql_real_escape_string($_POST['problem'])."', '$row_PATIENT_CLIENT[CAREA]', '$row_PATIENT_CLIENT[PHONE]', '$row_PATIENT_CLIENT[CAREA2]', '$row_PATIENT_CLIENT[PHONE2]', '$row_PATIENT_CLIENT[CAREA3]', '$row_PATIENT_CLIENT[PHONE3]', NOW(), NOW(), NOW())";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+               VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$row_PATIENT_CLIENT[PETTYPE]', '1', 
+                       '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETBREED'])."','".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CONTACT'])."','".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."', '$row_PATIENT_CLIENT[CAREA]', '$row_PATIENT_CLIENT[PHONE]', '$row_PATIENT_CLIENT[CAREA2]', '$row_PATIENT_CLIENT[PHONE2]', '$row_PATIENT_CLIENT[CAREA3]', '$row_PATIENT_CLIENT[PHONE3]', NOW(), NOW(), NOW())";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 //$closewin="self.close();";
 }
 
 else {
-$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysql_real_escape_string($_POST['problem'])."' WHERE RFPETID='$_SESSION[espatient]'";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."' WHERE RFPETID='$_SESSION[espatient]'";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 $closewin="self.close();";
 }
 
@@ -379,7 +379,7 @@ $categ = 0 ;
        <td width="16">&nbsp;</td>
        </tr> ';
  $col_pos = 1 ;
- while ($row_TNF = mysql_fetch_assoc($TNF_query)) {
+ while ($row_TNF = mysqli_fetch_assoc($TNF_query)) {
  if ($row_TNF['TCATGRY'] != $categ) {
    echo    '<tr>' ;
    echo    '<td class="Verdana12B" colspan="4" align=left>'. $row_TNF['TTYPE']. '</td>' ;

@@ -4,35 +4,35 @@ require_once('../../tryconnection.php');
 
 $xtable = $_GET['xtable'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $select_RECALL = "SELECT *, DATE_FORMAT(PDOB, '%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT, '%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT, '%m/%d/%Y') AS POTHDAT, DATE_FORMAT(POTHFOR, '%m/%d/%Y') AS POTHFOR, DATE_FORMAT(POTH8, '%m/%d/%Y') AS POTH8 FROM $xtable ORDER BY COMPANY,CONTACT ASC";
-$RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($RECALL);
-$totalRows_RECALL = mysql_num_rows($RECALL);
+$RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($RECALL);
+$totalRows_RECALL = mysqli_num_rows($RECALL);
 
 // Create a temporary table like the recalls, so if it is a postcard run, the big list can be consolidated
 // into a single entry per family just for printing. This saves the original list from being destroyed.
 
 $drop_dummy = "DROP TEMPORARY TABLE IF EXISTS  DUMMYRECALL" ;
 $make_dummy = "CREATE TEMPORARY TABLE DUMMYRECALL LIKE MAILING" ;
-$query_1 = mysql_query($drop_dummy, $tryconnection) or die(mysql_error()) ;
-$query_2 = mysql_query($make_dummy, $tryconnection) or die(mysql_error()) ;
+$query_1 = mysqli_query($tryconnection, $drop_dummy) or die(mysqli_error($mysqli_link)) ;
+$query_2 = mysqli_query($tryconnection, $make_dummy) or die(mysqli_error($mysqli_link)) ;
 
 
 if ($_GET['report']!='Display List'){
 
-$query_REPLOG="INSERT INTO REPLOG (TYPE, CLIENTSC, REPORT, SEARCH, PATIENTS) VALUES ('$xtable', 'All Clients', '$_GET[report]', '".mysql_real_escape_string($_GET['xsearch'])."', '$totalRows_RECALL')";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
+$query_REPLOG="INSERT INTO REPLOG (TYPE, CLIENTSC, REPORT, SEARCH, PATIENTS) VALUES ('$xtable', 'All Clients', '$_GET[report]', '".mysqli_real_escape_string($mysqli_link, $_GET['xsearch'])."', '$totalRows_RECALL')";
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
 }
 
 $query_CRITDATA = "SELECT * FROM CRITDATA LIMIT 1";
-$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable' AND SUBTYPE='$_GET[xsubtype]'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -121,7 +121,7 @@ display:block;
     <tr>
       <td colspan="5"><hr size="1" color="#CCCCCC" style="margin:0px;"/></td>
     </tr>
- <?php } while ($row_RECALL = mysql_fetch_assoc($RECALL)); ?>   
+ <?php } while ($row_RECALL = mysqli_fetch_assoc($RECALL)); ?>   
     <tr>
       <td colspan="5">&nbsp;</td>
     </tr>
@@ -142,51 +142,51 @@ else if ($_GET['report']=='Post Cards'){
 $AGGRE1 = "DROP TEMPORARY TABLE IF EXISTS FAMILY" ;
 $AGGRE2 = "CREATE TEMPORARY TABLE FAMILY LIKE ANNUAL" ;
 $AGGRE3 = "ALTER TABLE FAMILY MODIFY COLUMN PETNAME VARCHAR(255)" ;
-$AGGRE1A = mysql_query($AGGRE1, $tryconnection) or die(mysql_error()) ;
-$AGGRE2A = mysql_query($AGGRE2, $tryconnection) or die(mysql_error()) ;
-$AGGRE3A = mysql_query($AGGRE3, $tryconnection) or die(mysql_error()) ;
+$AGGRE1A = mysqli_query($tryconnection, $AGGRE1) or die(mysqli_error($mysqli_link)) ;
+$AGGRE2A = mysqli_query($tryconnection, $AGGRE2) or die(mysqli_error($mysqli_link)) ;
+$AGGRE3A = mysqli_query($tryconnection, $AGGRE3) or die(mysqli_error($mysqli_link)) ;
 
 $currentcust = 0 ;
 $isitand= 0 ;
 do {
  if ($row_RECALL['CUSTNO'] != $currentcust) {
-  $fixcomp = mysql_real_escape_string($row_RECALL['COMPANY']) ;
-  $fixcontact = mysql_real_escape_string($row_RECALL['CONTACT']) ;
-  $fixadd = mysql_real_escape_string($row_RECALL['ADDRESS1']) ;
-  $fixadd2 = mysql_real_escape_string($row_RECALL['ADDRESS2']) ;
-  $fixcity = mysql_real_escape_string($row_RECALL['CITY']) ;
-  $fixbreed = mysql_real_escape_string($row_RECALL['PETBREED']) ;
-  $fixpet = mysql_real_escape_string($row_RECALL['PETNAME']) ;
+  $fixcomp = mysqli_real_escape_string($mysqli_link, $row_RECALL['COMPANY']) ;
+  $fixcontact = mysqli_real_escape_string($mysqli_link, $row_RECALL['CONTACT']) ;
+  $fixadd = mysqli_real_escape_string($mysqli_link, $row_RECALL['ADDRESS1']) ;
+  $fixadd2 = mysqli_real_escape_string($mysqli_link, $row_RECALL['ADDRESS2']) ;
+  $fixcity = mysqli_real_escape_string($mysqli_link, $row_RECALL['CITY']) ;
+  $fixbreed = mysqli_real_escape_string($mysqli_link, $row_RECALL['PETBREED']) ;
+  $fixpet = mysqli_real_escape_string($mysqli_link, $row_RECALL['PETNAME']) ;
   
   $AGGRE4 = "INSERT INTO FAMILY (CUSTNO,COMPANY,CONTACT,ADDRESS1,ADDRESS2,CITY,STATE,ZIP,
   CAREA,PHONE,EMAIL,PETNAME,PETTYPE,PSEX,PDOB,PRABDAT,POTHDAT,POTHFOR,POTH8,PETBREED,PNEUTER) 
   VALUES  ('$row_RECALL[CUSTNO]','$fixcomp', '$fixcontact','$fixadd','$fixadd2','$fixcity','$row_RECALL[STATE]','$row_RECALL[ZIP]',
   '$row_RECALL[CAREA]','$row_RECALL[PHONE]','$row_RECALL[EMAIL]','$fixpet','$row_RECALL[PETTYPE]','$row_RECALL[PSEX]','$row_RECALL[PDOB]','$row_RECALL[PRABDAT]','$row_RECALL[POTHDAT]',
   '$row_RECALL[POTHFOR]', '$row_RECALL[POTH8]','$fixbreed','$row_RECALL[PNEUTER]')";
-  $AGGRE4A = mysql_query($AGGRE4, $tryconnection) or die(mysql_error()) ;
+  $AGGRE4A = mysqli_query($tryconnection, $AGGRE4) or die(mysqli_error($mysqli_link)) ;
   $currentcust = $row_RECALL['CUSTNO'] ;
   $isitand = 1 ;
  }
  else {
-  $fixpet = mysql_real_escape_string($row_RECALL['PETNAME']) ;
+  $fixpet = mysqli_real_escape_string($mysqli_link, $row_RECALL['PETNAME']) ;
  if ($isitand == 1) {
  $AGGRE5 = "UPDATE FAMILY SET FAMILY.PETNAME = CONCAT('$fixpet',' and ',FAMILY.PETNAME ) WHERE CUSTNO = '$currentcust' " ;
  } else {
  $AGGRE5 = "UPDATE FAMILY SET FAMILY.PETNAME = CONCAT('$fixpet',', ',FAMILY.PETNAME ) WHERE CUSTNO = '$currentcust' " ;
  }
- $AGGRE5A = mysql_query($AGGRE5, $tryconnection) or die(mysql_error()) ;
+ $AGGRE5A = mysqli_query($tryconnection, $AGGRE5) or die(mysqli_error($mysqli_link)) ;
  $isitand ++ ;
  }
-} while ($row_RECALL = mysql_fetch_assoc($RECALL));
+} while ($row_RECALL = mysqli_fetch_assoc($RECALL));
 
 // Then redo the recall search with the new table
 $select_RECALL = "SELECT CUSTNO,COMPANY,CONTACT,TITLE,ADDRESS1,ADDRESS2,CITY,STATE,ZIP, CAREA,PHONE,EMAIL,PETNAME,PETTYPE,PSEX, 
 DATE_FORMAT(PDOB, '%m/%d/%Y') AS PDOB, DATE_FORMAT(PRABDAT, '%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT, '%m/%d/%Y') AS POTHDAT, DATE_FORMAT(POTHFOR, '%m/%d/%Y') AS POTHFOR, 
 DATE_FORMAT(POTH8, '%m/%d/%Y') AS POTH8 FROM FAMILY ORDER BY COMPANY,CONTACT,CUSTNO ASC";
 
-$RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($RECALL);
-$totalRows_RECALL = mysql_num_rows($RECALL);
+$RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($RECALL);
+$totalRows_RECALL = mysqli_num_rows($RECALL);
 $i = 1;
 
 do { ?>   
@@ -312,7 +312,7 @@ do { ?>
   </tr>
 </table>
   </div>
- <?php $i = $i+1; } while ($row_RECALL = mysql_fetch_assoc($RECALL)); 
+ <?php $i = $i+1; } while ($row_RECALL = mysqli_fetch_assoc($RECALL)); 
   } 
   
   
@@ -322,25 +322,25 @@ do { ?>
 $AGGRE1 = "DROP  TABLE IF EXISTS FAMILY" ;
 $AGGRE2 = "CREATE  TABLE FAMILY LIKE HEARTWORM" ;
 $AGGRE3 = "ALTER TABLE FAMILY MODIFY COLUMN PETNAME VARCHAR(255)" ;
-$AGGRE1A = mysql_query($AGGRE1, $tryconnection) or die(mysql_error()) ;
-$AGGRE2A = mysql_query($AGGRE2, $tryconnection) or die(mysql_error()) ;
-$AGGRE3A = mysql_query($AGGRE3, $tryconnection) or die(mysql_error()) ;
+$AGGRE1A = mysqli_query($tryconnection, $AGGRE1) or die(mysqli_error($mysqli_link)) ;
+$AGGRE2A = mysqli_query($tryconnection, $AGGRE2) or die(mysqli_error($mysqli_link)) ;
+$AGGRE3A = mysqli_query($tryconnection, $AGGRE3) or die(mysqli_error($mysqli_link)) ;
 
 $currentcust = 0 ;
 $isitand= 0 ;
   
   do { 
  if ($row_RECALL['CUSTNO'] != $currentcust) {
-  $fixcomp = mysql_real_escape_string($row_RECALL['COMPANY']) ;
-  $fixpet = mysql_real_escape_string($row_RECALL['PETNAME']) ;
-  $fixadd = mysql_real_escape_string($row_RECALL['ADDRESS1']) ;
-  $fixcity = mysql_real_escape_string($row_RECALL['CITY']);
+  $fixcomp = mysqli_real_escape_string($mysqli_link, $row_RECALL['COMPANY']) ;
+  $fixpet = mysqli_real_escape_string($mysqli_link, $row_RECALL['PETNAME']) ;
+  $fixadd = mysqli_real_escape_string($mysqli_link, $row_RECALL['ADDRESS1']) ;
+  $fixcity = mysqli_real_escape_string($mysqli_link, $row_RECALL['CITY']);
   $AGGRE4 = "INSERT INTO FAMILY (CUSTNO,COMPANY,CONTACT,TITLE,ADDRESS1,ADDRESS2,CITY,STATE,ZIP,EMAIL,
   CAREA,PHONE,PETNAME,PETTYPE,PSEX,PDOB,PRABDAT,POTHDAT,POTHFOR,POTH8,PETBREED,PNEUTER) 
   VALUES  ('$row_RECALL[CUSTNO]','$fixcomp','$row_RECALL[CONTACT]','$row_RECALL[TITLE]','$fixadd','$row_RECALL[ADDRESS2]','$fixcity','$row_RECALL[STATE]','$row_RECALL[ZIP]','$row_RECALL[EMAIL]',
   '$row_RECALL[CAREA]','$row_RECALL[PHONE]','$fixpet','$row_RECALL[PETTYPE]','$row_RECALL[PSEX]','$row_RECALL[PDOB]','$row_RECALL[PRABDAT]','$row_RECALL[POTHDAT]',
   '$row_RECALL[POTHFOR]', '$row_RECALL[POTH8]','$row_RECALL[PETBREED]','$row_RECALL[PNEUTER]')";
-  $AGGRE4A = mysql_query($AGGRE4, $tryconnection) or die(mysql_error()) ;
+  $AGGRE4A = mysqli_query($tryconnection, $AGGRE4) or die(mysqli_error($mysqli_link)) ;
   $currentcust = $row_RECALL['CUSTNO'] ;
   $isitand = 1 ;
  }
@@ -350,19 +350,19 @@ $isitand= 0 ;
  } else {
  $AGGRE5 = "UPDATE FAMILY SET FAMILY.PETNAME = CONCAT('$fixpet]',', ',FAMILY.PETNAME ) WHERE CUSTNO = '$currentcust' " ;
  }
- $AGGRE5A = mysql_query($AGGRE5, $tryconnection) or die(mysql_error()) ;
+ $AGGRE5A = mysqli_query($tryconnection, $AGGRE5) or die(mysqli_error($mysqli_link)) ;
  $isitand ++ ;
  }
-} while ($row_RECALL = mysql_fetch_assoc($RECALL));
+} while ($row_RECALL = mysqli_fetch_assoc($RECALL));
 
 // Then redo the recall search with the new table
 
 
 $select_RECALL = "SELECT CUSTNO,COMPANY,CONTACT,TITLE,ADDRESS1,ADDRESS2,CITY,STATE,ZIP, EMAIL, CAREA,PHONE,PETNAME,PETTYPE,PSEX, 
  PDOB, PRABDAT,   POTHDAT, POTHFOR, POTH8 FROM FAMILY ORDER BY COMPANY,CONTACT ASC";
-$RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
-$row_RECALL = mysql_fetch_assoc($RECALL);
-$totalRows_RECALL = mysql_num_rows($RECALL);
+$RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
+$row_RECALL = mysqli_fetch_assoc($RECALL);
+$totalRows_RECALL = mysqli_num_rows($RECALL);
 
   $DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'] ;
   
@@ -400,7 +400,7 @@ $fp = fopen("/Users/nvc/Desktop/HEARTWORM.TXT", "x") ;
   '", "'.date('F jS Y').'", "'.$row_RECALL['PETNAME'].'", "'.$sex.'", "'.$row_RECALL['PDOB'].'", "'.$row_RECALL['PRABDAT'].'", "'.$row_RECALL['POTHFOR'].'", "'.$row_RECALL['POTHDAT'].
   '", "'.$row_RECALL['POTH8'].'", "'.$isare.'", "'.$row_RECALL['CYCLE'].'", "'.$row_RECALL['PETTYPE'].'", "'.$neuter.'"'."</span><br />";
 
-	} while ($row_RECALL = mysql_fetch_assoc($RECALL));
+	} while ($row_RECALL = mysqli_fetch_assoc($RECALL));
 } 
 else  {
 

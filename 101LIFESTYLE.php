@@ -3,24 +3,24 @@ session_start();
 require_once('../../tryconnection.php'); 
 
 $patient = $_GET['patient'];
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT = sprintf("SELECT PLIFE FROM PETMAST WHERE PETMAST.PETID = %s", $patient);
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $species=$_GET['species'];
 
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
-$LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
-$totalRows_LIFESTYLE = mysql_num_rows($LIFESTYLE);
+$LIFESTYLE = mysqli_query($tryconnection, $query_LIFESTYLE) or die(mysqli_error($mysqli_link));
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
+$totalRows_LIFESTYLE = mysqli_num_rows($LIFESTYLE);
 
 $plife=0;
 if (isset($_POST['save'])){
 $plife=implode(",",$_POST['plife']);
 	if ($patient!=0){
 	$updateSQL = "UPDATE PETMAST SET PLIFE='$plife'WHERE PETID='$patient'";
-	$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+	$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 	}
 $closewin='self.close();';
 }
@@ -84,7 +84,7 @@ opener.document.patients.plife.value = document.petlifestyle.plife.value;
     <?php echo $row_LIFESTYLE['LIFESTYLE']; ?></label> </td>
     </tr>
    
-   <?php } while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE)); ?>
+   <?php } while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE)); ?>
 </table>
   </div>
 </td>
@@ -103,5 +103,5 @@ opener.document.patients.plife.value = document.petlifestyle.plife.value;
 </body>
 <!-- InstanceEnd --></html>
 <?php
-mysql_free_result($LIFESTYLE);
+mysqli_free_result($LIFESTYLE);
 ?>

@@ -2,16 +2,16 @@
 session_start();
 require_once('../../tryconnection.php'); 
 $client=$_GET['client'];
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO='$client'";
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 
 $pdead=" AND PDEAD=0 AND PMOVED=0";
 $query_PATIENTS = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST WHERE CUSTNO = '$client'".$pdead." ORDER BY PETNAME ASC";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
-$row_PATIENTS = mysql_fetch_assoc($PATIENTS);
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
+$row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

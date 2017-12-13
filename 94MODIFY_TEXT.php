@@ -2,20 +2,20 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE PCID='$_GET[pcid]'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
-$row_POSTCARDS = mysql_fetch_assoc($POSTCARDS);
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
+$row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if (isset($_POST['save']) && $_GET['pcid'] == '0'){
-$insert_POSTCARDS = "INSERT INTO POSTCARDS (TYPE, SUBTYPE, MESSAGE, ADDRESS) VALUES ('$_GET[type]', '$_POST[xsubtype]', '".mysql_real_escape_string($_POST['message'])."', '".mysql_real_escape_string($_POST['address'])."')";
-$insert_POSTCARDS = mysql_query($insert_POSTCARDS, $tryconnection) or die(mysql_error());
+$insert_POSTCARDS = "INSERT INTO POSTCARDS (TYPE, SUBTYPE, MESSAGE, ADDRESS) VALUES ('$_GET[type]', '$_POST[xsubtype]', '".mysqli_real_escape_string($mysqli_link, $_POST['message'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['address'])."')";
+$insert_POSTCARDS = mysqli_query($tryconnection, $insert_POSTCARDS) or die(mysqli_error($mysqli_link));
 }
 
 else if (isset($_POST['save']) && $_GET['pcid'] != '0'){
-$update_POSTCARDS = "UPDATE POSTCARDS SET SUBTYPE='$_POST[xsubtype]', MESSAGE='".mysql_real_escape_string($_POST['message'])."', ADDRESS='".mysql_real_escape_string($_POST['address'])."' WHERE PCID='$_GET[pcid]'";
-$update_POSTCARDS = mysql_query($update_POSTCARDS, $tryconnection) or die(mysql_error());
+$update_POSTCARDS = "UPDATE POSTCARDS SET SUBTYPE='$_POST[xsubtype]', MESSAGE='".mysqli_real_escape_string($mysqli_link, $_POST['message'])."', ADDRESS='".mysqli_real_escape_string($mysqli_link, $_POST['address'])."' WHERE PCID='$_GET[pcid]'";
+$update_POSTCARDS = mysqli_query($tryconnection, $update_POSTCARDS) or die(mysqli_error($mysqli_link));
 header("Location:POSTCARD_LIST.php?type=$_GET[type]");
 }
 

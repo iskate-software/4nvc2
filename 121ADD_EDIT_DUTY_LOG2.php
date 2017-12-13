@@ -1,15 +1,15 @@
 <?php 
 session_start();
 require_once('../../tryconnection.php'); 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $timeformat=$_GET['timeformat'];
 
 $dutylogid=$_GET['dutylogid'];
 
 $query_DLOG = "SELECT *, DATE_FORMAT(TDATE, '%m/%d/%Y') AS TDATE, DATE_FORMAT(TTIME, '$timeformat') AS TTIME FROM TICKLER WHERE DUTYLOGID='$dutylogid'";
-$DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
+$DLOG = mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
+$row_DLOG = mysqli_fetch_assoc($DLOG);
 
 $patient=$row_DLOG['PETID'];
 $client=$row_DLOG['CUSTNO'];
@@ -23,17 +23,17 @@ $client=$_GET['client'];
 }
 
 $query_CLIENT_PATIENT="SELECT * FROM ARCUSTO JOIN PETMAST ON (PETMAST.PETID = '$patient') WHERE ARCUSTO.CUSTNO='$client' LIMIT 1";
-$CLIENT_PATIENT=mysql_query($query_CLIENT_PATIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT_PATIENT = mysql_fetch_assoc($CLIENT_PATIENT);
+$CLIENT_PATIENT=mysqli_query($tryconnection, $query_CLIENT_PATIENT) or die(mysqli_error($mysqli_link));
+$row_CLIENT_PATIENT = mysqli_fetch_assoc($CLIENT_PATIENT);
 
 
 $query_DOCTOR = sprintf("SELECT DOCTOR, DOCINIT FROM DOCTOR ORDER BY PRIORITY ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF, STAFFINIT FROM STAFF ORDER BY STAFF ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 ////////DAYS - TRY TO FIND OUT IF IT WORKS WITHOUT THIS SCRIPT - WAS GIVING TROUBLE ONLY IN WINDOWS.
 if (empty($_POST['days'])){
@@ -52,8 +52,8 @@ if ($_POST['recur'] == 0 ){
 else {
 $recurrit = 1 ;
 }
-$insertSQL = "INSERT INTO TICKLER (CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE) VALUES ('".$_GET['client']."', '".$_GET['patient']."', '".mysql_real_escape_string($_POST['veryimportant'].$_POST['reason'])."', STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y'), STR_TO_DATE('$ttime','$timeformat'), '".mysql_real_escape_string($_POST['enteredby'])."', '".mysql_real_escape_string($_POST['whotodo'])."', '$recurrit', '$days', NOW())";
-$Result1 = mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+$insertSQL = "INSERT INTO TICKLER (CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE) VALUES ('".$_GET['client']."', '".$_GET['patient']."', '".mysqli_real_escape_string($mysqli_link, $_POST['veryimportant'].$_POST['reason'])."', STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y'), STR_TO_DATE('$ttime','$timeformat'), '".mysqli_real_escape_string($mysqli_link, $_POST['enteredby'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['whotodo'])."', '$recurrit', '$days', NOW())";
+$Result1 = mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 $closewindow='self.close();';
 }
 
@@ -64,22 +64,22 @@ if ($_POST['recur'] == 0  ){
 else {
 $recurrit = 1 ;
 }
-$updateSQL ="UPDATE TICKLER SET REASON='".mysql_real_escape_string($_POST['veryimportant'].$_POST['reason'])."', TDATE=STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y'), TTIME=STR_TO_DATE('".$_POST['ttime']."','$timeformat'), ENTEREDBY='".$_POST['enteredby']."', WHOTODO='".$_POST['whotodo']."', RECUR='$recurrit', DAYS='$days', CREDATE=NOW() WHERE DUTYLOGID='$dutylogid'";
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$updateSQL ="UPDATE TICKLER SET REASON='".mysqli_real_escape_string($mysqli_link, $_POST['veryimportant'].$_POST['reason'])."', TDATE=STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y'), TTIME=STR_TO_DATE('".$_POST['ttime']."','$timeformat'), ENTEREDBY='".$_POST['enteredby']."', WHOTODO='".$_POST['whotodo']."', RECUR='$recurrit', DAYS='$days', CREDATE=NOW() WHERE DUTYLOGID='$dutylogid'";
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 $closewindow='self.close();';
 }
 
 
 elseif (isset($_POST["delete"]) && !isset($_SESSION["dutylogid"])){
 $query_archivedlog="INSERT INTO TICKLERARCHIVE (DUTYLOGID, CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE) SELECT DUTYLOGID, CUSTNO, DLPETID, REASON, TDATE, TTIME, ENTEREDBY, WHOTODO, RECUR, DAYS, CREDATE FROM TICKLER WHERE DUTYLOGID='$dutylogid'";
-$archivedlog = mysql_query($query_archivedlog, $tryconnection) or die(mysql_error());
+$archivedlog = mysqli_query($tryconnection, $query_archivedlog) or die(mysqli_error($mysqli_link));
 
 //STATUS D = DELETED, STATUS C = COMPLETED
 $query_status="UPDATE TICKLERARCHIVE SET STATUS='D', STATUSDATE=NOW() WHERE TDATE='$row_DLOG[TDATE]' AND  DUTYLOGID='$dutylogid'";
-$status=mysql_query($query_status, $tryconnection) or die(mysql_error());
+$status=mysqli_query($tryconnection, $query_status) or die(mysqli_error($mysqli_link));
 
 $deleteSQL = "DELETE FROM TICKLER WHERE DUTYLOGID='$dutylogid'";
-$delete = mysql_query($deleteSQL, $tryconnection) or die(mysql_error());
+$delete = mysqli_query($tryconnection, $deleteSQL) or die(mysqli_error($mysqli_link));
 $closewindow='self.close();';
 }
 
@@ -252,11 +252,11 @@ document.getElementById('maxnum').innerText=chars;
         <select name="enteredby" id="enteredby">
 			<?php do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($row_DLOG['ENTEREDBY']==$row_STAFF['DOCINIT']  && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); 
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); 
 			
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($row_DLOG['WHOTODO']==$row_STAFF['STAFFINIT']  && !empty($row_DLOG['WHOTODO'])){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
 			</select>    </td>
     <td width="70" align="right" valign="middle" class="Labels2">Date Due</td>
     <td width="114" align="left" valign="middle" class="Labels2"><input onclick="ds_sh(this);" name="tdate" type="text" class="Input" id="tdate" size="10" onfocus="InputOnFocus(this.id)" onblur="InputOnBlur(this.id)" value="<?php if (!empty($row_DLOG['TDATE'])) {echo $row_DLOG['TDATE']; } else {echo date("m/d/Y",mktime(0,0,0,date("m").date("d")+7.date("Y"))} ?>" title="MM/DD/YYYY"/></td>
@@ -267,22 +267,22 @@ document.getElementById('maxnum').innerText=chars;
     <td width="152" class="Labels2">
         <select name="whotodo" id="whotodo">
 			<?php 
-			$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-			$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+			$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
+			$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 			do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($row_DLOG['ENTEREDBY']==$row_STAFF['DOCINIT']  && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
 			
-			<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+			<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
 
 			<option value="REC" <?php if($row_DLOG['WHOTODO']=="REC"){echo "selected='selected'";} ?>>REC</option>			
 			<option value="TEC" <?php if($row_DLOG['WHOTODO']=="TEC"){echo "selected='selected'";} ?>>TEC</option>			
 
             <?php 
-			$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-            $row_STAFF = mysql_fetch_assoc($STAFF);
+			$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
+            $row_STAFF = mysqli_fetch_assoc($STAFF);
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($row_DLOG['WHOTODO']==$row_STAFF['STAFFINIT'] && !empty($row_DLOG['ENTEREDBY'])){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>    </td>
     <td width="70" align="right" valign="middle" class="Labels2">Time Due</td>
     <td width="114" align="left" valign="middle" class="Labels2">
