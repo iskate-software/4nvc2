@@ -3,7 +3,7 @@ session_start();
 require_once('../../tryconnection.php'); 
 include('../../ASSETS/age.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $Oclient=$_GET['Oclient'];
 $Opatient=$_GET['Opatient'];
@@ -17,23 +17,23 @@ $Tpatient=$_GET['Tpatient'];
 
 $what2move=$_GET['what2move'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_OCLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO='$Oclient'LIMIT 1";
-$OCLIENT = mysql_query($query_OCLIENT, $tryconnection) or die(mysql_error());
+$OCLIENT = mysqli_query($tryconnection, $query_OCLIENT) or die(mysqli_error($mysqli_link));
 $row_OCLIENT = mysqli_fetch_assoc($OCLIENT);
 
 $query_OPATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST WHERE PETID='$Opatient' LIMIT 1";
-$OPATIENT = mysql_query($query_OPATIENT, $tryconnection) or die(mysql_error());
+$OPATIENT = mysqli_query($tryconnection, $query_OPATIENT) or die(mysqli_error($mysqli_link));
 $row_OPATIENT = mysqli_fetch_assoc($OPATIENT);
 
 $query_TCLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO='$Tclient' LIMIT 1";
-$TCLIENT = mysql_query($query_TCLIENT, $tryconnection) or die(mysql_error());
+$TCLIENT = mysqli_query($tryconnection, $query_TCLIENT) or die(mysqli_error($mysqli_link));
 $row_TCLIENT = mysqli_fetch_assoc($TCLIENT);
 $newclient=$row_TCLIENT['TITLE']." ".$row_TCLIENT['CONTACT']." ".$row_TCLIENT['COMPANY'];
 
 $query_TPATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST WHERE PETID='$Tpatient' LIMIT 1";
-$TPATIENT = mysql_query($query_TPATIENT, $tryconnection) or die(mysql_error());
+$TPATIENT = mysqli_query($tryconnection, $query_TPATIENT) or die(mysqli_error($mysqli_link));
 $row_TPATIENT = mysqli_fetch_assoc($TPATIENT);
 
 if (isset($_POST['save'])){
@@ -44,30 +44,30 @@ if (isset($_POST['save'])){
 		if ($what2move=='TARGET1' || $what2move=='TARGET2'){
 		//duplicate the patient
 		$query_NEWPETNO = "SELECT MAX(PETNO) AS PETNO FROM PETMAST WHERE CUSTNO = '$Tclient'";
-		$NEWPETNO = mysql_query($query_NEWPETNO, $tryconnection) or die(mysql_error());
+		$NEWPETNO = mysqli_query($tryconnection, $query_NEWPETNO) or die(mysqli_error($mysqli_link));
 		$row_NEWPETNO = mysqli_fetch_assoc($NEWPETNO);
 		
 		$newpetno=($row_NEWPETNO['PETNO']+1);
 		
 		$query_MOVEPET1 = "DROP TEMPORARY TABLE IF EXISTS MOVEPET";
-		$MOVEPET1 = mysql_query($query_MOVEPET1, $tryconnection) or die(mysql_error());
+		$MOVEPET1 = mysqli_query($tryconnection, $query_MOVEPET1) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET2 = "CREATE TEMPORARY TABLE MOVEPET LIKE PETMAST";
-		$MOVEPET2 = mysql_query($query_MOVEPET2, $tryconnection) or die(mysql_error());
+		$MOVEPET2 = mysqli_query($tryconnection, $query_MOVEPET2) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET3 = "ALTER TABLE MOVEPET DROP COLUMN PETID";
-		$MOVEPET3 = mysql_query($query_MOVEPET3, $tryconnection) or die(mysql_error());
+		$MOVEPET3 = mysqli_query($tryconnection, $query_MOVEPET3) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET4 = "ALTER TABLE MOVEPET ADD COLUMN PETID INT(10) FIRST";
-		$MOVEPET4 = mysql_query($query_MOVEPET4, $tryconnection) or die(mysql_error());
+		$MOVEPET4 = mysqli_query($tryconnection, $query_MOVEPET4) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET5 = "INSERT INTO MOVEPET SELECT * FROM PETMAST WHERE PETID='$Opatient'";
-		$MOVEPET5 = mysql_query($query_MOVEPET5, $tryconnection) or die(mysql_error());
+		$MOVEPET5 = mysqli_query($tryconnection, $query_MOVEPET5) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET6 = "UPDATE MOVEPET SET PETID='0', CUSTNO='$Tclient', PETNO='$newpetno'";
-		$MOVEPET6 = mysql_query($query_MOVEPET6, $tryconnection) or die(mysql_error());
+		$MOVEPET6 = mysqli_query($tryconnection, $query_MOVEPET6) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET7 = "INSERT INTO PETMAST SELECT * FROM MOVEPET WHERE PETID='0'";
-		$MOVEPET7 = mysql_query($query_MOVEPET7, $tryconnection) or die(mysql_error());
+		$MOVEPET7 = mysqli_query($tryconnection, $query_MOVEPET7) or die(mysqli_error($mysqli_link));
 		$query_MOVEPET8 = "DROP TEMPORARY TABLE MOVEPET";
-		$MOVEPET8 = mysql_query($query_MOVEPET8, $tryconnection) or die(mysql_error());
+		$MOVEPET8 = mysqli_query($tryconnection, $query_MOVEPET8) or die(mysqli_error($mysqli_link));
 		
 		$query_NEWPETID = "SELECT PETID FROM PETMAST WHERE CUSTNO = '$Tclient' ORDER BY PETNO DESC LIMIT 1";
-		$NEWPETID = mysql_query($query_NEWPETID, $tryconnection) or die(mysql_error());
+		$NEWPETID = mysqli_query($tryconnection, $query_NEWPETID) or die(mysqli_error($mysqli_link));
 		$row_NEWPETID = mysqli_fetch_assoc($NEWPETID);
 		$newpetid=$row_NEWPETID['PETID'];
 		}
@@ -78,47 +78,47 @@ if (isset($_POST['save'])){
 		else {
 		$newpetid=$Tpatient;
 		$query_MERGE = "SELECT * FROM PETMAST WHERE PETID = '$Tpatient' " ;
-		$ISITMERGE = mysql_query($query_MERGE, $tryconnection) or die(mysql_error()) ;
+		$ISITMERGE = mysqli_query($tryconnection, $query_MERGE) or die(mysqli_error($mysqli_link)) ;
 		$row_ISITMERGE = mysqli_fetch_assoc($ISITMERGE) ;
 		$tpatname = $row_ISITMERGE['PETNAME'] ;
 		if ($tpatname == "Replace") {
 		$query_COPYPET = "SELECT * FROM PETMAST WHERE PETID = '$Opatient'" ;
-		$M_M = mysql_query($query_COPYPET, $tryconnection) or die(mysql_error()) ;
+		$M_M = mysqli_query($tryconnection, $query_COPYPET) or die(mysqli_error($mysqli_link)) ;
 		$row_M_M = mysqli_fetch_assoc($M_M) ;
-		$NEW1IN = "UPDATE PETMAST SET PETNAME='".mysql_real_escape_string($row_M_M[PETNAME])."',PETTYPE= '$row_M_M[PETTYPE]',PETBREED ='".mysql_real_escape_string($row_M_M[PETBREED])."',
-		PCOLOUR='".mysql_real_escape_string($row_M_M[PCOLOUR])."',PSEX='$row_M_M[PSEX]',PNEUTER='$row_M_M[PNEUTER]',PDOB='$row_M_M[PDOB]',
+		$NEW1IN = "UPDATE PETMAST SET PETNAME='".mysqli_real_escape_string($mysqli_link, $row_M_M[PETNAME])."',PETTYPE= '$row_M_M[PETTYPE]',PETBREED ='".mysqli_real_escape_string($mysqli_link, $row_M_M[PETBREED])."',
+		PCOLOUR='".mysqli_real_escape_string($mysqli_link, $row_M_M[PCOLOUR])."',PSEX='$row_M_M[PSEX]',PNEUTER='$row_M_M[PNEUTER]',PDOB='$row_M_M[PDOB]',
 		PFLAGS='$row_M_M[PFLAGS]',PRABIES='$row_M_M[PRABIES]',POTHER='$row_M_M[POTHER]' WHERE PETID = '$Tpatient'" ;
-		$query_NEW1IN = mysql_query($NEW1IN, $tryconnection) or die(mysql_error()) ;
+		$query_NEW1IN = mysqli_query($tryconnection, $NEW1IN) or die(mysqli_error($mysqli_link)) ;
 		$NEW1IN2 = "UPDATE PETMAST SET PRABYEARS='$row_M_M[PRABYEARS]',PLEUKYEARS='$row_M_M[PLEUKYEARS]',POTH02YEARS='$row_M_M[POTH02YEARS]',
 		POTH03YEARS='$row_M_M[POTH03YEARS]',POTH04YEARS='$row_M_M[POTH04YEARS]',POTH05YEARS='$row_M_M[POTH05YEARS]',POTH06YEARS='$row_M_M[POTH06YEARS]',
 		POTH07YEARS='$row_M_M[POTH07YEARS]',POTH08YEARS='$row_M_M[POTH08YEARS]',POTH09YEARS='$row_M_M[POTH09YEARS]',POTH10YEARS='$row_M_M[POTH10YEARS]',
 		POTH11YEARS='$row_M_M[POTH11YEARS]',POTH12YEARS='$row_M_M[POTH12YEARS]',POTH13YEARS='$row_M_M[POTH13YEARS]',POTH14YEARS='$row_M_M[POTH14YEARS]',
 		POTH15YEARS='$row_M_M[POTH15YEARS]' WHERE PETID = '$Tpatient'" ;
-		$query_NEW1IN2 = mysql_query($NEW1IN2, $tryconnection) or die(mysql_error()) ;
+		$query_NEW1IN2 = mysqli_query($tryconnection, $NEW1IN2) or die(mysqli_error($mysqli_link)) ;
 		$NEW1IN3 = "UPDATE PETMAST SET PFELHW='$row_M_M[PFELHW]',PRABDAT='$row_M_M[PRABDAT]',POTHDAT='$row_M_M[POTHDAT]',POTHTWO='$row_M_M[POTHTWO]', PLEUKDAT='$row_M_M[PLEUKDAT]',
 		POTHTHR='$row_M_M[POTHTHR]',POTHFOR='$row_M_M[POTHFOR]',POTHFIV='$row_M_M[POTHFIV]',POTHSIX='$row_M_M[POTHSIX]',POTHSEV='$row_M_M[POTHSEV]',
 		POTH8='$row_M_M[POTH8]',POTH9='$row_M_M[POTH9]',POTH10='$row_M_M[POTH10]',POTH11='$row_M_M[POTH11]',POTH12='$row_M_M[POTH12]',
 		POTH13='$row_M_M[POTH13]',POTH14='$row_M_M[POTH14]',POTH15='$row_M_M[POTH15]' WHERE PETID = '$Tpatient'" ;
-		$query_NEW1IN3 = mysql_query($NEW1IN3, $tryconnection) or die(mysql_error()) ;
+		$query_NEW1IN3 = mysqli_query($tryconnection, $NEW1IN3) or die(mysqli_error($mysqli_link)) ;
 		
 		$NEW1IN4 = "UPDATE PETMAST SET PRABTAG='$row_M_M[PRABTAG]',PXRAYFILE='$row_M_M[PXRAYFILE]',PFIRSTDATE='$row_M_M[PFIRSTDATE]', 
-		PLASTDATE='$row_M_M[PLASTDATE]',PDATA='".mysql_real_escape_string($row_M_M[PDATA])."',PHERD='$row_M_M[PHERD]',PSTAB='$row_M_M[PSTAB]',
+		PLASTDATE='$row_M_M[PLASTDATE]',PDATA='".mysqli_real_escape_string($mysqli_link, $row_M_M[PDATA])."',PHERD='$row_M_M[PHERD]',PSTAB='$row_M_M[PSTAB]',
 		PMAGNET='$row_M_M[PMAGNET]',PTENDX='$row_M_M[PTENDX]',PTATNO='$row_M_M[PTATNO]',PMAILDATE='$row_M_M[PMAILDATE]',
 		PRABLAST='$row_M_M[PRABLAST]',PDECLAW='$row_M_M[PDECLAW]',PFILENO='$row_M_M[PFILENO]',PWEIGHT='$row_M_M[PWEIGHT]',
 		PVACOUNT='$row_M_M[PVACOUNT]',PRABSER='$row_M_M[PRABSER]',PLIFE='$row_M_M[PLIFE]' WHERE PETID = '$Tpatient'" ;
-		$query_NEW1IN4 = mysql_query($NEW1IN4, $tryconnection) or die(mysql_error()) ;
+		$query_NEW1IN4 = mysqli_query($tryconnection, $NEW1IN4) or die(mysqli_error($mysqli_link)) ;
 		
 		$NEW1IN5 = "UPDATE PETMAST SET PSOSP='$row_M_M[PSOSP]', PWELL='$row_M_M[PWELL]',P6EXAM='$row_M_M[P6EXAM]',
-		PSORTKEY='$row_M_M[PSORTKEY]',POFEI='$row_M_M[POFEI]',STICKIE='".mysql_real_escape_string($row_M_M[STICKIE])."'  WHERE PETID = '$Tpatient'" ;
-		$query_NEW1IN5 = mysql_query($NEW1IN5, $tryconnection) or die(mysql_error()) ;
+		PSORTKEY='$row_M_M[PSORTKEY]',POFEI='$row_M_M[POFEI]',STICKIE='".mysqli_real_escape_string($mysqli_link, $row_M_M[STICKIE])."'  WHERE PETID = '$Tpatient'" ;
+		$query_NEW1IN5 = mysqli_query($tryconnection, $NEW1IN5) or die(mysqli_error($mysqli_link)) ;
 		}
 		}
 
 		$query_MOVEPET = "UPDATE PETMAST SET PMOVED='1' WHERE PETID='$Opatient'";
-		$MOVEPET = mysql_query($query_MOVEPET, $tryconnection) or die(mysql_error());
+		$MOVEPET = mysqli_query($tryconnection, $query_MOVEPET) or die(mysqli_error($mysqli_link));
 
 		$query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-		$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+		$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 		$row_PREFER = mysqli_fetch_assoc($PREFER);
 		
 		$Otreatmxx=$Oclient/$row_PREFER['TRTMCOUNT'] ;
@@ -127,27 +127,27 @@ if (isset($_POST['save'])){
 		$Ttreatmxx="TREATM".floor($Ttreatmxx) ;
 			//check if the target table exists
 			$query_CHECKTABLE="SELECT * FROM $Ttreatmxx LIMIT 1";
-			$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+			$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 			
 			if (isset($none)){
 			$create_TREATMXX="CREATE TABLE $Ttreatmxx LIKE TREATM0";
-			$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+			$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 			}
 		
 		$query_MOVEHIST1 = "DROP TEMPORARY TABLE IF EXISTS MOVEHIST";
-		$MOVEHIST1 = mysql_query($query_MOVEHIST1, $tryconnection) or die(mysql_error());
+		$MOVEHIST1 = mysqli_query($tryconnection, $query_MOVEHIST1) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST2 = "CREATE TEMPORARY TABLE MOVEHIST LIKE TREATM0";
-		$MOVEHIST2 = mysql_query($query_MOVEHIST2, $tryconnection) or die(mysql_error());
+		$MOVEHIST2 = mysqli_query($tryconnection, $query_MOVEHIST2) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST3 = "ALTER TABLE MOVEHIST DROP COLUMN LINENUMBER" ;
-		$MOVEHIST3 = mysql_query($query_MOVEHIST3, $tryconnection) or die(mysql_error());
+		$MOVEHIST3 = mysqli_query($tryconnection, $query_MOVEHIST3) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST4="ALTER TABLE MOVEHIST ADD COLUMN LINENUMBER INT(10)" ;
-		$MOVEHIST4 = mysql_query($query_MOVEHIST4, $tryconnection) or die(mysql_error());
+		$MOVEHIST4 = mysqli_query($tryconnection, $query_MOVEHIST4) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST5 = "INSERT INTO MOVEHIST SELECT * FROM $Otreatmxx WHERE PETID='$Opatient'";
-		$MOVEHIST5 = mysql_query($query_MOVEHIST5, $tryconnection) or die(mysql_error());
+		$MOVEHIST5 = mysqli_query($tryconnection, $query_MOVEHIST5) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST6 = "UPDATE MOVEHIST SET PETID='$newpetid', CUSTNO='$Tclient', LINENUMBER = 0";
-		$MOVEHIST6 = mysql_query($query_MOVEHIST6, $tryconnection) or die(mysql_error());
+		$MOVEHIST6 = mysqli_query($tryconnection, $query_MOVEHIST6) or die(mysqli_error($mysqli_link));
 		$query_MOVEHIST7="INSERT INTO $Ttreatmxx SELECT * FROM MOVEHIST";
-		$MOVEHIST7= mysql_query($query_MOVEHIST7, $tryconnection) or die(mysql_error());
+		$MOVEHIST7= mysqli_query($tryconnection, $query_MOVEHIST7) or die(mysqli_error($mysqli_link));
 	}//if ($what2move=='TARGET1'){
 
 
@@ -166,7 +166,7 @@ if (isset($_POST['save'])){
 
 			//check in DVMINV if there's only one pet on the invoice
 			$query_CHECKINV = "SELECT DISTINCT INVPET FROM DVMINV WHERE INVNO='$inv2move'";
-			$CHECKINV = mysql_query($query_CHECKINV, $tryconnection) or die(mysql_error());
+			$CHECKINV = mysqli_query($tryconnection, $query_CHECKINV) or die(mysqli_error($mysqli_link));
 			$totalRows_CHECKINV = mysqli_num_rows($CHECKINV);
 			
 				//if there's more than 1 pet, collect the invoice number for alerting the user
@@ -177,26 +177,26 @@ if (isset($_POST['save'])){
 				//if there's one pet only in the invoice, update the record with the new custno and petid
 				else if ($totalRows_CHECKINV == 1) {
 				$query_UPDATEINV = "UPDATE ARARECV SET CUSTNO='$Tclient', COMPANY='$newclient'  WHERE INVNO='$inv2move'";
-				$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+				$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 
 				$query_ARARECV = "SELECT IBAL FROM ARARECV WHERE INVNO='$inv2move'";
-				$ARARECV = mysql_query($query_ARARECV, $tryconnection) or die(mysql_error());
+				$ARARECV = mysqli_query($tryconnection, $query_ARARECV) or die(mysqli_error($mysqli_link));
 				$row_ARARECV=mysqli_fetch_assoc($ARARECV);
 				$ibal=$row_ARARECV['IBAL'];
 
 				$query_UPDATEINV = "UPDATE DVMINV SET INVCUST='$Tclient', INVPET='$newpetid'  WHERE INVNO='$row_MOVEINV[INVNO]'";
-				$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+				$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 				
 				$query_UPDATEINV = "UPDATE ARCUSTO SET BALANCE=(BALANCE-$ibal) WHERE CUSTNO='$Oclient'";
-				$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+				$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 				$query_UPDATEINV = "UPDATE ARCUSTO SET BALANCE=(BALANCE+$ibal) WHERE CUSTNO='$Tclient'";
-				$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+				$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 				}//else if ($totalRows_CHECKINV == 1)
 				
 				//if there is no record in DVMINV, look into DVMILAST and repeat the procedure
 				else if ($totalRows_CHECKINV == 0) {
 					$query_CHECKINV = "SELECT DISTINCT INVPET FROM DVMILAST WHERE INVNO='$inv2move'";
-					$CHECKINV = mysql_query($query_CHECKINV, $tryconnection) or die(mysql_error());
+					$CHECKINV = mysqli_query($tryconnection, $query_CHECKINV) or die(mysqli_error($mysqli_link));
 					$totalRows_CHECKINV = mysqli_num_rows($CHECKINV);
 					
 						if ($totalRows_CHECKINV > 1){
@@ -205,20 +205,20 @@ if (isset($_POST['save'])){
 						
 						else if ($totalRows_CHECKINV == 1) {
 						$query_UPDATEINV = "UPDATE DVMILAST SET INVCUST='$Tclient', INVPET='$newpetid'  WHERE INVNO='$inv2move'";
-						$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+						$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 						}
 						
 						//look into ARYDVMI
 						else if ($totalRows_CHECKINV == 0) {
 							$query_CHECKINV = "SELECT DISTINCT INVPET FROM ARYDVMI WHERE INVNO='$inv2move'";
-							$CHECKINV = mysql_query($query_CHECKINV, $tryconnection) or die(mysql_error());
+							$CHECKINV = mysqli_query($tryconnection, $query_CHECKINV) or die(mysqli_error($mysqli_link));
 							$totalRows_CHECKINV = mysqli_num_rows($CHECKINV);
 								if ($totalRows_CHECKINV > 1){
 								$dblTARGET2[]=$row_MOVEINV['INVNO'];
 								}	
 								else if ($totalRows_CHECKINV == 1) {
 								$query_UPDATEINV = "UPDATE ARYDVMI SET INVCUST='$Tclient', INVPET='$newpetid'  WHERE INVNO='$inv2move'";
-								$UPDATEINV = mysql_query($query_UPDATEINV, $tryconnection) or die(mysql_error());
+								$UPDATEINV = mysqli_query($tryconnection, $query_UPDATEINV) or die(mysqli_error($mysqli_link));
 								}
 						}//else if ($totalRows_CHECKINV == 0)
 				}//else if ($totalRows_CHECKINV == 0)
@@ -476,7 +476,7 @@ else {document.getElementById(x).checked=false;}
   </tr>
   <?php 
   		$query_MOVEINV = "SELECT *,DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE, DATE_FORMAT(DTEPAID, '%m/%d/%Y') AS DTEPAID FROM ARARECV WHERE CUSTNO='$Oclient' AND IBAL!=0";
-		$MOVEINV = mysql_query($query_MOVEINV, $tryconnection) or die(mysql_error());
+		$MOVEINV = mysqli_query($tryconnection, $query_MOVEINV) or die(mysqli_error($mysqli_link));
 		$row_MOVEINV=mysqli_fetch_assoc($MOVEINV);
 		do { ?>
 

@@ -2,14 +2,14 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_DOCTOR = sprintf("SELECT * FROM DOCTOR ORDER BY DOCTOR ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT * FROM STAFF ORDER BY STAFF ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 $row_STAFF = mysqli_fetch_assoc($STAFF);
 
 if (isset($_POST['save'])){
@@ -52,14 +52,14 @@ if (isset($_POST['save'])){
 
 	if (!empty($_POST['credate'])){
 	$credateconv="SELECT STR_TO_DATE('".$_POST['credate']."','%m/%d/%Y')";
-	$credaterun=mysql_query($credateconv, $tryconnection) or die(mysql_error());
+	$credaterun=mysqli_query($tryconnection, $credateconv) or die(mysqli_error($mysqli_link));
 	$credate=mysqli_fetch_array($credaterun);
 	$_SESSION['credate']=$credate[0];
 	}
 	else {unset($_SESSION['credate']);}
 	if (!empty($_POST['tdate'])){
 	$tdateconv="SELECT STR_TO_DATE('".$_POST['tdate']."','%m/%d/%Y')";
-	$tdaterun=mysql_query($tdateconv, $tryconnection) or die(mysql_error());
+	$tdaterun=mysqli_query($tryconnection, $tdateconv) or die(mysqli_error($mysqli_link));
 	$tdate=mysqli_fetch_array($tdaterun);
 	$_SESSION['tdate']=$tdate[0];
 	}
@@ -70,13 +70,13 @@ $closewindow='opener.document.location="DUTY_LOG.php";self.close();';
 
 if (isset($_SESSION['credate'])){
 	$credateconvback="SELECT DATE_FORMAT('".$_SESSION['credate']."', '%m/%d/%Y')";
-	$credaterunback=mysql_query($credateconvback, $tryconnection) or die(mysql_error());
+	$credaterunback=mysqli_query($tryconnection, $credateconvback) or die(mysqli_error($mysqli_link));
 	$credateback=mysqli_fetch_array($credaterunback);
 }
 
 if (isset($_SESSION['tdate'])){
 	$tdateconvback="SELECT DATE_FORMAT('".$_SESSION['tdate']."', '%m/%d/%Y')";
-	$tdaterunback=mysql_query($tdateconvback, $tryconnection) or die(mysql_error());
+	$tdaterunback=mysqli_query($tryconnection, $tdateconvback) or die(mysqli_error($mysqli_link));
 	$tdateback=mysqli_fetch_array($tdaterunback);
 }
 
@@ -200,7 +200,7 @@ opener.document.location="DUTY_LOG.php";
             <td align="center" class="Labels">
           <select name="whotodo" id="whotodo">
 			<?php 
-			$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+			$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 			$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 			do { ?>
             <option value="<?php echo $row_DOCTOR['DOCINIT']; ?>" <?php if($_SESSION['whotodo']==$row_DOCTOR['DOCINIT']){echo "selected='selected'";} ?>><?php echo $row_DOCTOR['DOCTOR']; ?></option>
@@ -211,7 +211,7 @@ opener.document.location="DUTY_LOG.php";
 			<option value="TEC" <?php if($_SESSION['whotodo']=="TEC"){echo "selected='selected'";} ?>>TEC</option>			
 			
             <?php 
-            $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+            $STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
             $row_STAFF = mysqli_fetch_assoc($STAFF);
             do { ?>
             <option value="<?php echo $row_STAFF['STAFFINIT']; ?>" <?php if($_SESSION['whotodo']==$row_STAFF['STAFFINIT']){echo "selected='selected'";} ?>><?php echo $row_STAFF['STAFF']; ?></option>

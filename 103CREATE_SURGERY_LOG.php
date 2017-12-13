@@ -14,9 +14,9 @@ $patient=$_SESSION['patient'];
 
 $client=$_SESSION['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $psex=$row_PATIENT_CLIENT['PSEX'] ;
@@ -29,18 +29,18 @@ $petname=$row_PATIENT_CLIENT['PETNAME'] ;
 $_SESSION['petname'] = $petname ;
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN='1' ORDER BY PRIORITY ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY PRIORITY ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 $row_STAFF = mysqli_fetch_assoc($STAFF);
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (isset($_POST['check'])) {
  $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
- $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+ $PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
  $row_PREFER = mysqli_fetch_assoc($PREFER);
 
  $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
@@ -50,11 +50,11 @@ if (isset($_POST['check'])) {
  if (isset($_POST['finish']) || isset($_POST['save'])){
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx LIMIT 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	$create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	} //if (isset($none))
 
 ////////////////////////////////////////////////////////////////////
@@ -63,8 +63,8 @@ if (isset($_POST['check'])) {
 
    //. (0101000000000000)
 	
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'PROCEDURES', b'0100000000000000', '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'PROCEDURES', b'0100000000000000', '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -79,8 +79,8 @@ if (isset($_POST['check'])) {
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', b'0100000000000000', '42', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', b'0100000000000000', '42', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	
  ////////////////////////////////////////////////////////////////////
@@ -89,14 +89,14 @@ if (isset($_POST['check'])) {
  
  // interim values.
  $get_Byear = "SELECT YEAR(PDOB) AS SYR, MONTH(PDOB) AS SMONTH FROM PETMAST WHERE PETID = '$patient' LIMIT 1" ;
- $query_Byear = mysql_query($get_Byear, $tryconnection) or die(mysql_error()) ;
+ $query_Byear = mysqli_query($tryconnection, $get_Byear) or die(mysqli_error($mysqli_link)) ;
  $row_Byear = mysqli_fetch_assoc($query_Byear) ;
  $syr = $row_Byear['SYR'] ;
  $smon = $row_Byear['SMONTH'] ;
  
 // $now_get = "SELECT YEAR(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWYR, MONTH(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWMTH" ;
  $now_get = "SELECT YEAR(NOW()) AS NOWYR, MONTH(NOW()) AS NOWMTH" ;
- $yea_mysql = mysql_query($now_get, $tryconnection) or die(mysql_error()) ;
+ $yea_mysql = mysqli_query($tryconnection, $now_get) or die(mysqli_error($mysqli_link)) ;
  $row_convert = mysqli_fetch_array($yea_mysql) ;
  
  $nowyr = $row_convert[0] ;
@@ -111,10 +111,10 @@ if (isset($_POST['check'])) {
  
     $set_up = "INSERT INTO SURGLOG (INVDTE,PETID,CUSTNO,WEIGHT,CONDPRE,CONDPOST,TIME,INVDOC,SYEAR,SMONTH,SWHODID,SWHOMON,SWHOREC,COMMENT)  
                VALUES (STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '$patient', '$client', '$_POST[weight]', '$_POST[PreCC]', '$_POST[PostCC]', '$_POST[stime]',
-               '".mysql_real_escape_string($_POST['who'])."', '$syr1', '$smon1', '".mysql_real_escape_string($_POST['whodid'])."', '".mysql_real_escape_string($_POST['whomon'])."',
-               '".mysql_real_escape_string($_POST['whorec'])."', '".mysql_real_escape_string($_POST['treatdesc'])."')";
+               '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', '$syr1', '$smon1', '".mysqli_real_escape_string($mysqli_link, $_POST['whodid'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['whomon'])."',
+               '".mysqli_real_escape_string($mysqli_link, $_POST['whorec'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['treatdesc'])."')";
                
-    $Logit = mysql_query($set_up, $tryconnection) or die(mysql_error()) ;
+    $Logit = mysqli_query($tryconnection, $set_up) or die(mysqli_error($mysqli_link)) ;
     
  } //if (isset($_POST['finish'])|| isset($_POST['save']))
  if (isset($_POST['save']) ) {
@@ -452,7 +452,7 @@ return valid;
     <td align="left" class="Labels2">Who performed?<select name="whodid">
         <option>???</option>
             <?php 
-               $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error()); 
+               $DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link)); 
                while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)) { ?>
 		      <option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
               <?php }  ?>
@@ -460,12 +460,12 @@ return valid;
               </td>
     <td align="left" class="Labels2">Who monitored?<select name="whomon">
         <option>???</option>
-            <?php $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error()); 
+            <?php $DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link)); 
                while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)) { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
           <?php }  ?>
           
-            <?php $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+            <?php $STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
                   while($row_STAFF = mysqli_fetch_assoc($STAFF)) { ?>
 		<option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
           <?php }  ?>
@@ -473,12 +473,12 @@ return valid;
           </td>
     <td align="left" class="Labels2">Who recorded?<select name="whorec">
         <option>???</option>
-            <?php $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error()); 
+            <?php $DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link)); 
                while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)) { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
           <?php }  ?>
           
-        <?php $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+        <?php $STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
               while ($row_STAFF = mysqli_fetch_assoc($STAFF)) { ?>
 		<option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
           <?php }  ?>

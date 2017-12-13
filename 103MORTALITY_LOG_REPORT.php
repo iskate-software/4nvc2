@@ -3,7 +3,7 @@ session_start();
 
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!empty($_GET['startdate'])){
 $startdate=$_GET['startdate'];
@@ -14,7 +14,7 @@ $startdate='00/00/0000';
 $stdum = $startdate ;
 
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -26,7 +26,7 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $search = "" ;
@@ -43,35 +43,35 @@ $search = " ORDER BY MORT.COMPANY, INVDTE " ;
 
 
 $Wtunit_get = "SELECT HOSPNAME, WEIGHTUNIT FROM CRITDATA LIMIT 1" ;
-$query_wt = mysql_query($Wtunit_get, $tryconnection) or die(mysql_error()) ;
+$query_wt = mysqli_query($tryconnection, $Wtunit_get) or die(mysqli_error($mysqli_link)) ;
 $row_Wt = mysqli_fetch_assoc($query_wt) ;
 
 $Wtunit = $row_Wt['WEIGHTUNIT'].',' ;
 $Hosp = $row_Wt['HOSPNAME'] ;
 
 $wot_died = "SELECT TCATGRY FROM VETCAN WHERE INSTR(TDESCR,'EUTH') <> 0  LIMIT 1 " ;
-$query_wot = mysql_query($wot_died, $tryconnection) or die(mysql_error()) ;
+$query_wot = mysqli_query($tryconnection, $wot_died) or die(mysqli_error($mysqli_link)) ;
 $row_itis = mysqli_fetch_assoc($query_wot) ;
 $tcat = $row_itis['TCATGRY'] ;
 
 $clean_up = "DROP TEMPORARY TABLE IF EXISTS MORT" ;
-$do_it = mysql_query($clean_up, $tryconnection) or die(mysql_error()) ;
+$do_it = mysqli_query($tryconnection, $clean_up) or die(mysqli_error($mysqli_link)) ;
 
 $make_dead = "CREATE TEMPORARY TABLE MORT LIKE RADLOG " ;
-$die = mysql_query($make_dead, $tryconnection) or die(mysql_error()) ;
+$die = mysqli_query($tryconnection, $make_dead) or die(mysqli_error($mysqli_link)) ;
 
 $get_dead = "INSERT INTO MORT (INVDTE,PETID,CUSTNO,INVDOC) SELECT INVDATETIME,INVPET,INVCUST,INVORDDOC FROM ARYDVMI WHERE INVDATETIME  >= '$startdate[0]' AND INVDATETIME <= '$enddate[0]' AND INVMAJ = '$tcat' " ;
-$lay_them_out = mysql_query($get_dead, $tryconnection) or die(mysql_error()) ;
+$lay_them_out = mysqli_query($tryconnection, $get_dead) or die(mysqli_error($mysqli_link)) ;
 
 $get_dead2 = "INSERT INTO MORT (INVDTE,PETID,CUSTNO,INVDOC) SELECT INVDATETIME,INVPET,INVCUST,INVORDDOC FROM DVMINV WHERE INVDATETIME  >= '$startdate[0]' AND INVDATETIME <= '$enddate[0]' AND INVMAJ = '$tcat' " ;
-$lay_them_out2 = mysql_query($get_dead2, $tryconnection) or die(mysql_error()) ;
+$lay_them_out2 = mysqli_query($tryconnection, $get_dead2) or die(mysqli_error($mysqli_link)) ;
 
 $dead_get = "SELECT DISTINCT INVDTE, MORT.CUSTNO, MORT.PETID, TITLE,CONTACT,COMPANY,CAREA,PHONE,CONCAT(ADDRESS1,' ',ADDRESS2) AS ADDRESS, CITY, ZIP, PETNAME, 
               CONCAT(PSEX,', ', PETBREED,', Weight: ', '$Wtunit', ' Age; ', ROUND(DATEDIFF(INVDTE,PDOB)/365.25,1), ' Yr(s) ') AS SPECIES, INVDOC  
              FROM MORT LEFT JOIN ARCUSTO ON MORT.CUSTNO = ARCUSTO.CUSTNO 
              LEFT JOIN PETMAST ON MORT.PETID = PETMAST.PETID " ;
              
-$query_dead = mysql_query($dead_get, $tryconnection) or die(mysql_error()) ;
+$query_dead = mysqli_query($tryconnection, $dead_get) or die(mysqli_error($mysqli_link)) ;
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

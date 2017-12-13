@@ -2,10 +2,10 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $get_Year = "SELECT MOD((YEAR(NOW())-1)/4,1) AS LEAP " ;
-$query_Year = mysql_query($get_Year, $tryconnection) or die(mysql_error()) ;
+$query_Year = mysqli_query($tryconnection, $get_Year) or die(mysqli_error($mysqli_link)) ;
 $get_leap = mysqli_fetch_assoc($query_Year) ;
 $year = $get_leap['LEAP'] ;
 
@@ -50,7 +50,7 @@ if ($month == 2) {
 }
 
  $Lastyr = "SELECT YEAR(NOW())- 1 AS Lyear" ;
- $getyr = mysql_query($Lastyr, $tryconnection) or die(mysql_error()) ;
+ $getyr = mysqli_query($tryconnection, $Lastyr) or die(mysqli_error($mysqli_link)) ;
  $getyr1 = mysqli_fetch_assoc($getyr) ;
  $rowlast = $getyr1['Lyear'] ;
 

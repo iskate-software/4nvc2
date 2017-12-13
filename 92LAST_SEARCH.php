@@ -4,9 +4,9 @@ session_start();
 //session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_REPLOG = "SELECT * FROM REPLOG WHERE TYPE='$_GET[type]' ORDER BY LOGDTE DESC LIMIT 1";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
 $row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 if (isset($_POST['search'])){

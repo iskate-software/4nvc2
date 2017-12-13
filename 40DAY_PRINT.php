@@ -3,7 +3,7 @@ session_start();
 require_once('../tryconnection.php');
 include("../ASSETS/tax.php");
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startday = $_GET['month'] . '/'.$_GET['day'].'/'.$_GET['year']  ;
 $calday = $_GET['year'].'-'.$_GET['month'] . '-'.$_GET['day']  ;
 
@@ -26,24 +26,24 @@ $endname ="Zz" ;
 // set up species abbrev table
 $species = array() ;
 $q_spec = "SELECT ABBREV FROM ANIMTYPE ORDER BY ANIMALID" ;
-$get_spec = mysql_query($q_spec, $tryconnection) or die(mysql_error()) ;
+$get_spec = mysqli_query($tryconnection, $q_spec) or die(mysqli_error($mysqli_link)) ;
 while ($row_spec = mysqli_fetch_assoc($get_spec)) {
  $species[] = $row_spec['ABBREV'] ;
  }
 
 $startdate1="SELECT STR_TO_DATE('$startday','%m/%d/%Y')";
-$startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
+$startdate2=mysqli_query($tryconnection, $startdate1) or die(mysqli_error($mysqli_link));
 $startdate3=mysqli_fetch_array($startdate2);
 
 $Round_about_midnight = "SELECT DATE_ADD('$startdate3[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
-$Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
+$Bump_it = mysqli_query($tryconnection, $Round_about_midnight) or die(mysqli_error($mysqli_link)) ;
 $Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $startdate3 = $Get_Bump['LATER'] ;
 
 echo ' at midnight, ' . $startdate3 ;
 
 $closemonth ="SELECT DATE_FORMAT('$startdate3', '%W %M %e %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
@@ -53,7 +53,7 @@ echo  ' Formatted date is ' . $clm2 ;
 
 $Daysheet = "SELECT TIMEOF,DURATION,NAME,CONTACT,CAREA,PHONE1,PETNAME,RFPETTYPE,PSEX,PROBLEM,SHORTDOC FROM APPTS WHERE DATEOF = '$calday' AND CANCELLED <> 1 ORDER BY SHORTDOC, TIMEOF " ;
             
-$Get_Data = mysql_query($Daysheet, $tryconnection) or die(mysql_error()) ;
+$Get_Data = mysqli_query($tryconnection, $Daysheet) or die(mysqli_error($mysqli_link)) ;
 $row_Day = mysqli_fetch_assoc($Get_DATA) ;
 $firstdoc = $row_Day['SHORTDOC'] ;
 

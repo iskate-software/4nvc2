@@ -2,29 +2,29 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$_SESSION[espatient]' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $query_RECEP = "SELECT PROBLEM FROM RECEP WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
 $row_RECEP = mysqli_fetch_assoc($RECEP);
 
 
 
 if (isset($_POST['save']) && empty($row_RECEP)){
 $query_insertSQL="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME) 
-VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysql_real_escape_string($row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$row_PATIENT_CLIENT[PETTYPE]', '1', 
-      '".mysql_real_escape_string($row_PATIENT_CLIENT['PETBREED'])."','".mysql_real_escape_string($row_PATIENT_CLIENT[CONTACT])."','".mysql_real_escape_string($_POST['problem'])."','$row_PATIENT_CLIENT[CAREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]',NOW(), NOW(), NOW())";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$row_PATIENT_CLIENT[PETTYPE]', '1', 
+      '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETBREED'])."','".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT[CONTACT])."','".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."','$row_PATIENT_CLIENT[CAREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]',NOW(), NOW(), NOW())";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 $closewin="self.close();";
 }
 
 else if (isset($_POST['save']) && !empty($row_RECEP)){
-$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysql_real_escape_string($_POST['problem'])."' WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."' WHERE RFPETID='$_SESSION[espatient]' LIMIT 1";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 $closewin="self.close();";
 }
 

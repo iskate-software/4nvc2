@@ -5,7 +5,7 @@ session_start();
 	}
 	
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -30,7 +30,7 @@ function bodyonload(){
 	
 	else {
 	$query_INHOSP = "SELECT TEXT FROM ".$_SESSION['table'][0];
-	$INHOSP = mysql_query($query_INHOSP, $tryconnection) or die(mysql_error());
+	$INHOSP = mysqli_query($tryconnection, $query_INHOSP) or die(mysqli_error($mysqli_link));
 	$row_INHOSP = mysqli_fetch_assoc($INHOSP);
 	$dataline = EXPLODE (' ', $row_INHOSP)
 	foreach ($dataline as $dollarsign) {

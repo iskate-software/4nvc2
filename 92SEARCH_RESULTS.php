@@ -2,18 +2,18 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $startdate=$_POST['startdate'];
 
 $startdate="SELECT STR_TO_DATE('$startdate','%c/%e/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 $enddate=$_POST['enddate'];
 
 $enddate="SELECT STR_TO_DATE('$enddate','%c/%e/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 
@@ -56,16 +56,16 @@ if (isset($_SESSION['newtable'])){
 $xtable = $_SESSION['newtable'];
 
  $query_RECALL = "DROP TABLE IF EXISTS $xtable";
- $RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+ $RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
  
  $query_RECALL2 = "CREATE TABLE $xtable LIKE MAILING" ;
- $RECAL2L = mysql_query($query_RECALL2, $tryconnection) or die(mysql_error());
+ $RECAL2L = mysqli_query($tryconnection, $query_RECALL2) or die(mysqli_error($mysqli_link));
  
 $query_RECALL = "INSERT INTO $xtable (PETID, CUSTNO, PETNAME, PETTYPE, PETBREED, PCOLOUR, PSEX, PNEUTER, PDOB, PRABDAT, POTHDAT, POTHFOR, POTH8, TITLE, CONTACT, COMPANY, ADDRESS1, ADDRESS2, CITY, STATE, ZIP, CAREA, CAREA2, PHONE, PHONE2, CYCLE, EMAIL) SELECT PETMAST.PETID, PETMAST.CUSTNO, PETMAST.PETNAME, PETMAST.PETTYPE, PETMAST.PETBREED, PETMAST.PCOLOUR, PETMAST.PSEX, PETMAST.PNEUTER, PETMAST.PDOB, PETMAST.PRABDAT, PETMAST.POTHDAT, PETMAST.POTHFOR, PETMAST.POTH8, ARCUSTO.TITLE, ARCUSTO.CONTACT, ARCUSTO.COMPANY, ARCUSTO.ADDRESS1, ARCUSTO.ADDRESS2, ARCUSTO.CITY, ARCUSTO.STATE, ARCUSTO.ZIP, ARCUSTO.CAREA, ARCUSTO.CAREA2, ARCUSTO.PHONE, ARCUSTO.PHONE2, PETMAST.PVACOUNT,EMAIL FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO = PETMAST.CUSTNO) WHERE PETMAST.POTH8 >= '$startdate[0]' AND PETMAST.POTH8 <= '$enddate[0]' AND (PETMAST.PDEAD + PETMAST.PMOVED = 0) AND INSTR(UPPER(PETMAST.PDATA),'NO REM') = 0 AND (".$species.") $skipref $namerange $mailing";
-$RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+$RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
 
 $select_RECALL = "SELECT * FROM $xtable";
-$select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
+$select_RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
 $row_RECALL = mysqli_fetch_assoc($select_RECALL);
 $totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
@@ -73,7 +73,7 @@ $totalRows_RECALL = mysqli_num_rows($select_RECALL);
 else {
 $xtable = $_SESSION['oldtable'];
 $select_RECALL = "SELECT * FROM $xtable";
-$select_RECALL = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
+$select_RECALL = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
 $row_RECALL = mysqli_fetch_assoc($select_RECALL);
 $totalRows_RECALL = mysqli_num_rows($select_RECALL);
 }
@@ -81,16 +81,16 @@ $totalRows_RECALL = mysqli_num_rows($select_RECALL);
 
 //$query_REPLOG = "SELECT *, DATE_FORMAT(LOGDTE, '%m/%d/%Y') AS LOGDTE FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC LIMIT 1";
 $query_REPLOG = "SELECT * FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC LIMIT 1";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
 $row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
 $row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if ($xtable == 'ANNUAL') {
-$xsearch = mysql_real_escape_string("Examined between $_POST[startdate] - $_POST[enddate]" ) .'$media';
+$xsearch = mysqli_real_escape_string($mysqli_link, "Examined between $_POST[startdate] - $_POST[enddate]" ) .'$media';
 }
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

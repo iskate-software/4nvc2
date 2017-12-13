@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $day = $_GET['day'];
 $month = $_GET['month'];
@@ -19,10 +19,10 @@ $_SESSION['full_day'] = $full_day ;
 $_SESSION['effective_day'] = $effective_day ;
 
 $whoison = "SELECT DISTINCT UNIQUE1,APPTDOCS.SHORTDOC,APPTDOCS.DOCTOR,APPTDOCS.INITIALS, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3, DUTY FROM APPTDOCS JOIN DOCTOR ON APPTDOCS.SHORTDOC = DOCTOR.SHORTDOC WHERE  DATEIS = '$effective_day' ORDER BY PRIORITY ASC, UNIQUE1 DESC" ;
-$query_doc = mysql_query($whoison, $tryconnection) or die(mysql_error()) ;
+$query_doc = mysqli_query($tryconnection, $whoison) or die(mysqli_error($mysqli_link)) ;
 
 $available = "SELECT DISTINCT DOCTOR,SHORTDOC,DOCINIT FROM DOCTOR WHERE SCHEDULE = 1 AND PRIORITY < 99 ORDER BY PRIORITY ASC" ;
-$query_who = mysql_query($available, $tryconnection) or die(mysql_error()) ;
+$query_who = mysqli_query($tryconnection, $available) or die(mysqli_error($mysqli_link)) ;
 
  
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

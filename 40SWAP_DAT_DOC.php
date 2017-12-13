@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $effective_day = $_SESSION['effective_day'] ;
 echo ' Day is ' . $effective_day ;
 if (!isset($_GET['changedoc']) && $_GET['replacement_doctor']== '') {
@@ -20,7 +20,7 @@ if (isset($_GET['changedoc'])) {
    $newdoc = $_GET['replacement_doctor'] ;
    echo ' For everything, New doctor is ' . $newdoc ;
    $oldunique = "SELECT UNIQUE1,DUTY FROM APPTDOCS WHERE DOCTOR = '$olddoc' AND DATEIS = '$effective_day' ORDER BY UNIQUE1 DESC LIMIT 1 " ;
-   $get_old = mysql_query($oldunique, $tryconnection) or die(mysql_error()) ;
+   $get_old = mysqli_query($tryconnection, $oldunique) or die(mysqli_error($mysqli_link)) ;
    $query_old = mysqli_fetch_assoc($get_old) ;
    $row_doc_u = $query_old['UNIQUE1'] ;
    echo ' Unique is '  . $row_doc_u ;
@@ -35,7 +35,7 @@ if (isset($_GET['changedoc'])) {
     } //if ($newdoc == ' ')
     else { echo ' looking for new doctor ' . $newdoc ;
           $repl_query = "SELECT DOCTOR,SHORTDOC, DOCINIT, PRIORITY FROM DOCTOR WHERE SHORTDOC = '$newdoc' LIMIT 1" ;
-          $get_rep_doc = mysql_query($repl_query, $tryconnection) or die(mysql_error()) ;
+          $get_rep_doc = mysqli_query($tryconnection, $repl_query) or die(mysqli_error($mysqli_link)) ;
            echo ' did the query ' ;
           $row_rep_doc = mysqli_fetch_assoc($get_rep_doc) ;
           $doctor = $row_rep_doc['DOCTOR'] ;
@@ -52,9 +52,9 @@ if (isset($_GET['changedoc'])) {
    else {
         $replace_all = "UPDATE APPTDOCS SET SHORTDOC = '$shortdoc', DOCTOR = '$doctor', INITIALS = '$initials', SEQ = '$seq' WHERE UNIQUE1 ='$row_doc_u' LIMIT 1" ;
         $move_clients = "UPDATE APPTS SET SHORTDOC = '$shortdoc' WHERE DATEOF = '$effective_day' AND SHORTDOC = '$olddoc' " ;
-        $out_they_go = mysql_query($move_clients, $tryconnection) or die(mysql_error()) ;
+        $out_they_go = mysqli_query($tryconnection, $move_clients) or die(mysqli_error($mysqli_link)) ;
         }
-   $query_replace = mysql_query($replace_all, $tryconnection) or die(mysql_error()) ;
+   $query_replace = mysqli_query($tryconnection, $replace_all) or die(mysqli_error($mysqli_link)) ;
   } // if (isset($_GET['changedoc']))
   
    else { // not a simple all type swap
@@ -89,7 +89,7 @@ if (isset($_GET['changedoc'])) {
     // The start, stop and eslot times are going to have to be saved, as the relevant pieces are inherited by the replacement doctor.
     echo ' Looking for it ' ;
     $original = "SELECT * FROM APPTDOCS WHERE UNIQUE1 = '$checkbox[1]' LIMIT 1 " ;
-    $query_orig = mysql_query($original, $tryconnection) or die(mysql_error()) ;
+    $query_orig = mysqli_query($tryconnection, $original) or die(mysqli_error($mysqli_link)) ;
     $row_orig = mysqli_fetch_assoc($query_orig) ;
     $origduty = $row_orig['DUTY'] ;
     $origopen1 = $row_orig['OPEN1'] ;
@@ -211,12 +211,12 @@ if (isset($_GET['changedoc'])) {
         if ($repl == ' ') {              
            $origduty = substr_replace($origduty,'0',$fl,1) ;
            $update_old = "UPDATE APPTDOCS SET DUTY = '$origduty' WHERE UNIQUE1 = '$checkbox[1]' LIMIT 1 " ;
-           $query_old = mysql_query($update_old, $tryconnection) or die(mysql_error()) ;
+           $query_old = mysqli_query($tryconnection, $update_old) or die(mysqli_error($mysqli_link)) ;
         } //if ($repl == ' ')
         else { echo ' closing in ' ; 
               $newrec = 1 ;
               $is_current = "SELECT UNIQUE1,DUTY FROM APPTDOCS WHERE DATEIS = '$effective_day' AND SHORTDOC = '$repl' LIMIT 1 " ;
-              $ask = mysql_query($is_current, $tryconnection) or die(mysql_error()) ;
+              $ask = mysqli_query($tryconnection, $is_current) or die(mysqli_error($mysqli_link)) ;
      
      // if the replacement doctor is not on that day, 
     
@@ -227,7 +227,7 @@ if (isset($_GET['changedoc'])) {
                  //  retrieve the doctor info for the new record and set up a dummy duty 
                  $newdoc = $_GET['replacement_doctor'] ;
                  $repl_query = "SELECT DOCTOR,SHORTDOC, DOCINIT, PRIORITY FROM DOCTOR WHERE SHORTDOC = '$newdoc' LIMIT 1" ;
-                 $get_rep_doc = mysql_query($repl_query, $tryconnection) or die(mysql_error()) ;
+                 $get_rep_doc = mysqli_query($tryconnection, $repl_query) or die(mysqli_error($mysqli_link)) ;
                  $row_rep_doc = mysqli_fetch_assoc($get_rep_doc) ;
           
                  $doctor = $row_rep_doc['DOCTOR'] ;
@@ -241,33 +241,33 @@ if (isset($_GET['changedoc'])) {
                  switch ($time) {
                   case 1;
                   $make_new = "INSERT INTO APPTDOCS (DATEIS,SEQ,DOCTOR,SHORTDOC,INITIALS,DUTY,OPEN1,CLOSE1,ES1ST,ES1SP,ES1BST,ES1BSP)
-                          VALUES ('$effective_day','$seq', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."', '$repl_duty','$O1', '$C1', '$E1S', '$E1P',
+                          VALUES ('$effective_day','$seq', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."', '$repl_duty','$O1', '$C1', '$E1S', '$E1P',
                           '$E1BS', '$E1BP' )";
                   break ;
                   case 2;
                   $make_new = "INSERT INTO APPTDOCS (DATEIS,SEQ,DOCTOR,SHORTDOC,INITIALS,DUTY,OPEN2,CLOSE2,ES2ST,ES2SP,ES2BST,ES2BSP)
-                          VALUES ('$effective_day','$seq', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."', '$repl_duty','$O2', '$C2', '$E2S', '$E2P',
+                          VALUES ('$effective_day','$seq', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."', '$repl_duty','$O2', '$C2', '$E2S', '$E2P',
                           '$E2BS', '$E2BP' )";
                   break ;
                   case 3;
                   $make_new = "INSERT INTO APPTDOCS (DATEIS,SEQ,DOCTOR,SHORTDOC,INITIALS,DUTY,OPEN3,CLOSE3,ES3ST,ES3SP,ES3BST,ES3BSP)
-                          VALUES ('$effective_day','$seq', '".mysql_real_escape_string($doctor)."', '".mysql_real_escape_string($shortdoc)."', '".mysql_real_escape_string($initials)."', '$repl_duty','$O3', '$C3', '$E3S', '$E3P',
+                          VALUES ('$effective_day','$seq', '".mysqli_real_escape_string($mysqli_link, $doctor)."', '".mysqli_real_escape_string($mysqli_link, $shortdoc)."', '".mysqli_real_escape_string($mysqli_link, $initials)."', '$repl_duty','$O3', '$C3', '$E3S', '$E3P',
                           '$E3BS', '$E3BP' )";
                   break ;
                   }
-                  $query_new = mysql_query($make_new, $tryconnection) or die(mysql_error())  ;
+                  $query_new = mysqli_query($tryconnection, $make_new) or die(mysqli_error($mysqli_link))  ;
                   
                    // now downgrade the original doctor
         
                    $origduty = substr_replace($origduty,'0',$fl,1) ;
                    $update_old = "UPDATE APPTDOCS SET DUTY = '$origduty' WHERE UNIQUE1 = '$checkbox[1]' LIMIT 1 " ;
-                   $query_old = mysql_query($update_old, $tryconnection) or die(mysql_error()) ;
+                   $query_old = mysqli_query($tryconnection, $update_old) or die(mysqli_error($mysqli_link)) ;
   //    /*
                    }
      
                    else {  // just find the replacement doctor's record, check for conflicts then update the duty, and start and end times.
                         echo ' New doc is working . ' ;
-                        $ask = mysql_query($is_current, $tryconnection) or die(mysql_error()) ;
+                        $ask = mysqli_query($tryconnection, $is_current) or die(mysqli_error($mysqli_link)) ;
                         $newrec = 0;
                         $row_current = mysqli_fetch_assoc($ask) ;
                         $replunique = $row_current['UNIQUE1'];
@@ -305,7 +305,7 @@ if (isset($_GET['changedoc'])) {
    //                     */
                           if ($conflict == 0) { 
                           echo ' query was ' . $ask ;
-                                    $ask = mysql_query($is_current, $tryconnection) or die(mysql_error()) ;
+                                    $ask = mysqli_query($tryconnection, $is_current) or die(mysqli_error($mysqli_link)) ;
                                     $query_a = mysqli_fetch_assoc($ask) ;   
                                     $oduty = $query_a['DUTY'] ;
                                     echo ' old duty was ' . $oduty ;
@@ -331,12 +331,12 @@ if (isset($_GET['changedoc'])) {
                                      break ;
                                     }  // end of switch
           
-                                    $query_repl = mysql_query($update_repl, $tryconnection) or die(mysql_error()) ; 
+                                    $query_repl = mysqli_query($tryconnection, $update_repl) or die(mysqli_error($mysqli_link)) ; 
                                     // now downgrade the original doctor
    
                                     $origduty = substr_replace($origduty,'0',$fl,1) ;
                                     $update_old = "UPDATE APPTDOCS SET DUTY = '$origduty' WHERE UNIQUE1 = '$checkbox[1]' LIMIT 1 " ;
-                                    $query_old = mysql_query($update_old, $tryconnection) or die(mysql_error()) ;  
+                                    $query_old = mysqli_query($tryconnection, $update_old) or die(mysqli_error($mysqli_link)) ;  
                                      
                                    }  // conflict == 0
                     } // if new doctor not working

@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!empty($_GET['startdate'])){
  $startdate=$_GET['startdate'];
@@ -15,7 +15,7 @@ else {
 $stdum = $startdate ;
 
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
  
 if (!empty($_GET['enddate'])){
@@ -28,7 +28,7 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDING";
-$enddate = mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate = mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate = mysqli_fetch_array($enddate) ;
 
 $search = "" ;
@@ -57,7 +57,7 @@ else if ($file2search == 3)  {
 }
 
 $Wtunit_get = "SELECT HOSPNAME, WEIGHTUNIT FROM CRITDATA LIMIT 1" ;
-$query_wt = mysql_query($Wtunit_get, $tryconnection) or die(mysql_error()) ;
+$query_wt = mysqli_query($tryconnection, $Wtunit_get) or die(mysqli_error($mysqli_link)) ;
 $row_Wt = mysqli_fetch_assoc($query_wt) ;
 
 $Wtunit = $row_Wt['WEIGHTUNIT'].',' ;
@@ -65,7 +65,7 @@ $Hosp = $row_Wt['HOSPNAME'] ;
 
 //Find the client called DRUG PURCHASES, so dummy records can be created to show the shipments blended in with the usage.
 $Druggie_get = "SELECT ARCUSTO.CUSTNO AS CUST,CONTACT,COMPANY,PETNAME,PETID FROM ARCUSTO LEFT JOIN PETMAST ON ARCUSTO.CUSTNO = PETMAST.CUSTNO WHERE COMPANY = 'PURCHASES' AND CONTACT = 'DRUG' AND PETNAME = 'SHIPMENT IN' LIMIT 1" ;
-$query_purch = mysql_query($Druggie_get, $tryconnection) or die(mysql_error()) ;
+$query_purch = mysqli_query($tryconnection, $Druggie_get) or die(mysqli_error($mysqli_link)) ;
 $row_purch = mysqli_fetch_assoc($query_purch) ;
 $purch_custno = $row_purch['CUST'] ;
 $purch_company = $row_purch['COMPANY'] ;
@@ -73,13 +73,13 @@ $purch_contact = $row_purch['CONTACT'] ;
 
 $make_dummy1 = "DROP TABLE IF EXISTS NARDUMMY" ;
 $purch_pet = $row_purch['PETNAME'] ;
-$query_dummy1 = mysql_query($make_dummy1, $tryconnection) or die(mysql_error()) ;
+$query_dummy1 = mysqli_query($tryconnection, $make_dummy1) or die(mysqli_error($mysqli_link)) ;
 $make_dummy2 = "CREATE TABLE NARDUMMY (INVDTE DATE, TIMEACT INT(10), SORT1 INT(1) UNSIGNED, CUSTNO CHAR(8),PETID INT(10) UNSIGNED,TITLE VARCHAR(10),CONTACT VARCHAR(25),COMPANY VARCHAR(50),
                  CAREA INT(3), PHONE CHAR(8), ADDRESS VARCHAR(50), CITY VARCHAR(50), ZIP CHAR(7), PETNAME VARCHAR(50),SPECIES VARCHAR(80), 
                  ITEM CHAR(8),DESCRIP VARCHAR(30), B4 FLOAT(10,2), DRAWN FLOAT(8,2),USED FLOAT(8,2), QTYREM FLOAT(10,2), INVDOC VARCHAR(50), ROA CHAR(10), TYPE CHAR(20),TIME SMALLINT(3) UNSIGNED, SEQ MEDIUMINT(5), COMMENT VARCHAR(160))ENGINE = MYISAM " ;
-$query_dummy2 = mysql_query($make_dummy2, $tryconnection) or die(mysql_error()) ; 
+$query_dummy2 = mysqli_query($tryconnection, $make_dummy2) or die(mysqli_error($mysqli_link)) ; 
 $make_dummy3 = "TRUNCATE NARDUMMY" ;   
-$query_dummy3 = mysql_query($make_dummy3, $tryconnection) or die(mysql_error()) ;            
+$query_dummy3 = mysqli_query($tryconnection, $make_dummy3) or die(mysqli_error($mysqli_link)) ;            
                  
                  
 if ($file2search != 3) {
@@ -87,7 +87,7 @@ if ($file2search != 3) {
              SELECT DATEPURCH,'00:00:00' ,'1','$purch_custno','$purch_contact','$purch_company','$purch_pet', ITEM,DESCRIP, B4, 0-QTY, B4+QTY, 'Brought in' FROM NARCPUR WHERE DATEPURCH  >= '$startdate[0]' AND DATEPURCH <= '$enddate[0]'  $dsearch" ;
 
  //           SELECT DATEPURCH,NARCPUR.DATETIME,'2','$purch_custno','$purch_contact','$purch_company','$purch_pet', ITEM,DESCRIP, B4, 0-QTY, B4+QTY, 'Brought in' FROM NARCPUR WHERE DATEPURCH  >= '$startdate[0]' AND DATEPURCH <= '$enddate[0]'  $dsearch" ;
- $query_in = mysql_query($Ship_in, $tryconnection) or die(mysql_error()) ; 
+ $query_in = mysqli_query($tryconnection, $Ship_in) or die(mysqli_error($mysqli_link)) ; 
 }
 $NARC_get = "INSERT INTO NARDUMMY SELECT INVDTE, NARCLOG.DATETIME, '3', NARCLOG.CUSTNO, NARCLOG.PETID, TITLE,CONTACT,COMPANY,CAREA,PHONE,CONCAT(ADDRESS1,' ',ADDRESS2) AS ADDRESS, CITY, ZIP, PETNAME, CONCAT(PSEX,', ', PETBREED,', Weight: ',
              CONCAT(NARCLOG.WEIGHT,' ', '$Wtunit'), ' Age; ',NYEAR,' Yr(s) ', NMONTH, ' Mths') AS SPECIES, NARCLOG.ITEM, DESCRIP, NARCLOG.B4,DRAWN, USED, QTYREM,INVDOC, ROA, NARCLOG.TYPE,TIME, NARCLOG.SEQ,  
@@ -96,10 +96,10 @@ $NARC_get = "INSERT INTO NARDUMMY SELECT INVDTE, NARCLOG.DATETIME, '3', NARCLOG.
              LEFT JOIN PETMAST ON NARCLOG.PETID = PETMAST.PETID
              LEFT JOIN ARINVT ON NARCLOG.ITEM = ARINVT.ITEM WHERE INVDTE  >= '$startdate[0]' AND INVDTE <= '$enddate[0]' $search " ;
             
-$query_narc = mysql_query($NARC_get, $tryconnection) or die(mysql_error()) ;
+$query_narc = mysqli_query($tryconnection, $NARC_get) or die(mysqli_error($mysqli_link)) ;
 
 $final_mix = "SELECT * FROM NARDUMMY $fsearch" ;   
-$query_final = mysql_query($final_mix, $tryconnection) or die(mysql_error()) ;     
+$query_final = mysqli_query($tryconnection, $final_mix) or die(mysqli_error($mysqli_link)) ;     
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

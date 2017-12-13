@@ -1,7 +1,7 @@
 <?php 
 session_start();
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!isset($_POST['save'])) {
 // On the way into the page 
@@ -21,7 +21,7 @@ if (!isset($_POST['save'])) {
   $ind_hours = "SELECT HRSID, DOCTOR, SHORTDOC, INITIALS,  DATE_FORMAT(STARTDT,'%m/%d/%Y') AS STARTDT,  DATE_FORMAT(ENDDT,'%m/%d/%Y') AS ENDDT,  SEQUENCE, DUTY, OPEN1, CLOSE1, OPEN2, CLOSE2, OPEN3, CLOSE3,
                 ES1ST, ES1SP, ES1BST, ES1BSP, ES2ST, ES2SP, ES2BST, ES2BSP, ES3ST,ES3SP, ES3BST, ES3BSP FROM HRSDOC 
                 WHERE DOCTOR = '$doctor' AND DAYINWEEK = '$day' AND STARTDT <= DATE(NOW()) AND ENDDT >= DATE(NOW()) ORDER BY STARTDT DESC, HRSID DESC LIMIT 1  ";
-  $GET_hrs = mysql_query($ind_hours, $tryconnection) or die(mysql_error()) ;
+  $GET_hrs = mysqli_query($tryconnection, $ind_hours) or die(mysqli_error($mysqli_link)) ;
   $row_hours = mysqli_fetch_assoc($GET_hrs) ;
  
 // Did the query find any data?
@@ -160,7 +160,7 @@ if (!isset($_POST['save'])) {
   
          $found = 0 ;
          $ind_dtls = "SELECT DOCTOR, SHORTDOC, DOCINIT,PRIORITY FROM DOCTOR WHERE DOCTOR = '$doctor' AND SCHEDULE = 1 LIMIT 1 " ;
-         $GET_dtls = mysql_query($ind_dtls, $tryconnection) or die(mysql_error()) ;
+         $GET_dtls = mysqli_query($tryconnection, $ind_dtls) or die(mysqli_error($mysqli_link)) ;
          $row_dtls = mysqli_fetch_assoc($GET_dtls) ;
          // Stage 3
          

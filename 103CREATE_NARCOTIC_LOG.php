@@ -4,7 +4,7 @@ session_start();
 require_once('../../tryconnection.php');
 include("../../ASSETS/age.php");
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 
 $_SESSION['narcotic'] = 'LOG' ;
@@ -19,14 +19,14 @@ $narc = $_GET['itemid'];
 $narcdescrip = $_GET['descrip'] ;
 
 $QTY_available = "SELECT SUM(QTYREM) AS QTYAVAIL FROM NARCPUR WHERE ITEM = '$narc' AND QTYREM > 0 " ;
-$query_qty = mysql_query($QTY_available, $tryconnection) or die(mysql_error()) ;
+$query_qty = mysqli_query($tryconnection, $QTY_available) or die(mysqli_error($mysqli_link)) ;
 $row_qty = mysqli_fetch_assoc($query_qty) ;
 $available = $row_qty['QTYAVAIL'] ;  // i.e. x
 
 $client=$_SESSION['client'];
 
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $psex=$row_PATIENT_CLIENT['PSEX'] ;
@@ -39,16 +39,16 @@ $petname=$row_PATIENT_CLIENT['PETNAME'] ;
 $_SESSION['petname'] = $petname ;
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN ='1' ORDER BY PRIORITY ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY PRIORITY ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 $row_STAFF = mysqli_fetch_assoc($STAFF);
 
 if (isset($_POST['check'])) {
  $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
- $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+ $PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
  $row_PREFER = mysqli_fetch_assoc($PREFER);
 
  $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
@@ -59,10 +59,10 @@ if (isset($_POST['check'])) {
  if ((isset($_POST['finish']) || isset($_POST['save'])) && $_POST['drawn'] != 0){
 
 	$getnow = "SELECT NOW() as now, DATE_SUB(NOW(), INTERVAL 2 WEEK) AS window" ;
-	$qg = mysql_query($getnow, $tryconnection) or die(mysql_error()) ;
+	$qg = mysqli_query($tryconnection, $getnow) or die(mysqli_error($mysqli_link)) ;
 	$row_q = mysqli_fetch_assoc($qg) ;
 	$get_when = "SELECT STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y') AS PROJ" ;
-	$q_when = mysql_query($get_when, $tryconnection) or die(mysql_error()) ;
+	$q_when = mysqli_query($tryconnection, $get_when) or die(mysqli_error($mysqli_link)) ;
 	$row_when = mysqli_fetch_assoc($q_when) ;
 	
 // First, check the dates:
@@ -96,11 +96,11 @@ else {
  $qtyrem = $available - $_POST['drawn'] ; // this is after everything is finished.
 
 	$query_CHECKTABLE="SELECT CUSTNO FROM $treatmxx LIMIT 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	 $create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	 $result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	 $result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	} //if (isset($none))
 
 ////////////////////////////////////////////////////////////////////
@@ -110,12 +110,12 @@ else {
 // So create the hx entry.
    // The filter is set to a bit value. (0100000000000000)
 	
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'NARCOTICS', b'0100000000000000', '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'NARCOTICS', b'0100000000000000', '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 	$note3 = 'Drug: '.$narc.'. Drawn: '. $_POST['drawn']. '.  Used: ' . $_POST['used'] .'. ROA: '.$_POST['roa'].'. ';
-	$insertSQL2 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note3)."', b'0100000000000000', '42', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-	mysql_query($insertSQL2, $tryconnection) or die(mysql_error());
+	$insertSQL2 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note3)."', b'0100000000000000', '42', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+	mysqli_query($tryconnection, $insertSQL2) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -130,8 +130,8 @@ else {
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL3 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', b'0100000000000000', '42', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL3, $tryconnection) or die(mysql_error());
+			$insertSQL3 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', b'0100000000000000', '42', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL3) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	
  ////////////////////////////////////////////////////////////////////
@@ -140,14 +140,14 @@ else {
  
  // interim values for the log.
  $get_Byear = "SELECT YEAR(PDOB) AS NYR, MONTH(PDOB) AS NMONTH FROM PETMAST WHERE PETID = '$patient' LIMIT 1" ;
- $query_Byear = mysql_query($get_Byear, $tryconnection) or die(mysql_error()) ;
+ $query_Byear = mysqli_query($tryconnection, $get_Byear) or die(mysqli_error($mysqli_link)) ;
  $row_Byear = mysqli_fetch_assoc($query_Byear) ;
  $nyr = $row_Byear['NYR'] ;
  $nmon = $row_Byear['NMONTH'] ;
  
  $now_get = "SELECT YEAR(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWYR, MONTH(STR_TO_DATE('$_POST[treatdate]','%m/%d/%Y')) AS NOWMTH" ;
 // $now_get = "SELECT YEAR(NOW()) AS NOWYR, MONTH(NOW()) AS NOWMTH" ;
- $yea_mysql = mysql_query($now_get, $tryconnection) or die(mysql_error()) ;
+ $yea_mysql = mysqli_query($tryconnection, $now_get) or die(mysqli_error($mysqli_link)) ;
  $row_convert = mysqli_fetch_assoc($yea_mysql) ;
  
  $nowyr = $row_convert['NOWYR'] ;
@@ -163,13 +163,13 @@ else {
    $set_up = "INSERT INTO NARCLOG (INVDTE,PETID,CUSTNO,WEIGHT,ITEM, B4, DRAWN, USED,QTYREM, ROA,TYPE,TIME, INVDOC,NYEAR, NMONTH,NWHODID,COMMENT)  
                VALUES (STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '$patient', '$client', '$_POST[weight]', '$narc', '$available' ,
                '$_POST[drawn]','$_POST[used]', '$qtyrem','$_POST[roa]','$_POST[reason]','$_POST[ntime]',
-               '".mysql_real_escape_string($_POST['who'])."', '$nyr1', '$nmon1', '".mysql_real_escape_string($_POST['whodid'])."', 
-               '".mysql_real_escape_string($_POST['treatdesc'])."')";
+               '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', '$nyr1', '$nmon1', '".mysqli_real_escape_string($mysqli_link, $_POST['whodid'])."', 
+               '".mysqli_real_escape_string($mysqli_link, $_POST['treatdesc'])."')";
                
-    $Logit = mysql_query($set_up, $tryconnection) or die(mysql_error()) ;
+    $Logit = mysqli_query($tryconnection, $set_up) or die(mysqli_error($mysqli_link)) ;
 
     $UPDATE_PURCH = "SELECT NPID,ITEM,DESCRIP,QTYREM,LASTDATE FROM NARCPUR WHERE ITEM = '$narc' AND QTYREM > 0 ORDER BY DATEPURCH,DATETIME,NPID " ;
-    $query_upd = mysql_query($UPDATE_PURCH, $tryconnection) or die(mysql_error()) ;
+    $query_upd = mysqli_query($tryconnection, $UPDATE_PURCH) or die(mysqli_error($mysqli_link)) ;
     $unfulfilled = $_POST['drawn'] ;  //i.e. y
     $done = 0 ;  // i.e. at this point, done to date.
 //    $out = $unfulfilled ;  
@@ -186,13 +186,13 @@ else {
          $unfulfilled = 0 ; 
         }
        $WITHDRAW = "UPDATE NARCPUR SET QTYREM = '$rem', LASTDATE = STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y') WHERE NPID = '$row_purch[NPID]' LIMIT 1" ;
-       $query_update = mysql_query($WITHDRAW, $tryconnection) or die(mysql_error()) ;
+       $query_update = mysqli_query($tryconnection, $WITHDRAW) or die(mysqli_error($mysqli_link)) ;
      }
     
     }
 // re-calc available in case they are doing multiple logs.   
 $QTY_available = "SELECT SUM(QTYREM) AS QTYAVAIL FROM NARCPUR WHERE ITEM = '$narc' AND QTYREM > 0 " ;
-$query_qty = mysql_query($QTY_available, $tryconnection) or die(mysql_error()) ;
+$query_qty = mysqli_query($tryconnection, $QTY_available) or die(mysqli_error($mysqli_link)) ;
 $row_qty = mysqli_fetch_assoc($query_qty) ;
 $available = $row_qty['QTYAVAIL'] ;  // i.e. x
 
@@ -538,7 +538,7 @@ return valid;
     <td align="left" class="Labels2">Who administered?<select name="whodid">
         <option>???</option>
             <?php 
-               $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error()); 
+               $DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link)); 
                while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)) { ?>
 		      <option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
               <?php }  ?>

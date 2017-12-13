@@ -2,7 +2,7 @@
 session_start();
  
 require_once('../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 include("../ASSETS/age.php");
 $timeformat=$_SESSION['timeformat'];
 $recepid=$_GET['recepid'];
@@ -15,10 +15,10 @@ if (isset($_GET['patient'])) {
 $docsurname = $_GET['doctor'] ;
 $date=$_GET['date'] ;
 $time=$_GET['time'] ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $Get_now = "SELECT NOW() AS NOW ";
-$Query_now = mysql_query($Get_now, $tryconnection) or die(mysql_error()) ;
+$Query_now = mysqli_query($tryconnection, $Get_now) or die(mysqli_error($mysqli_link)) ;
 $row_now = mysqli_fetch_assoc($Query_now) ;
 $vs = substr($row_now['NOW'],0,10) ;
 $date1 = strftime('%Y-%m-%d',$date);
@@ -31,14 +31,14 @@ $emonth = substr($exit_date,0,2) ;
 $eday = substr($exit_date,3,2) ;
 
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '%H:%i') AS TIME FROM RECEP WHERE RFPETID='$patient' LIMIT 1";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
 $row_RECEP = mysqli_fetch_assoc($RECEP);
  
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN=1 ORDER BY PRIORITY ");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 
 $query_Doctor = "SELECT DOCTOR, SHORTDOC, SIGNEDIN, PRIORITY FROM DOCTOR WHERE SIGNEDIN = 1 AND SCHEDULE = 1 AND PRIORITY <> 99  ORDER BY PRIORITY ";
-$Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
+$Doctor = mysqli_query($tryconnection, $query_Doctor) or die(mysqli_error($mysqli_link));
 
 $docss = array() ;
 $docsl = array() ;
@@ -61,7 +61,7 @@ if (isset($_POST['check'])) {
 
 // Step 1  Pick the next 3 items out of HOSPHOURS.
  $query_param = "SELECT ENDHOUR,ENDMIN,APPTTIME FROM HOSPHOURS WHERE DAY = DAYOFWEEK(FROM_UNIXTIME('$date'))-1 LIMIT 1 " ;
- $Get_param   = mysql_query($query_param, $tryconnection) or die(mysql_error()) ;
+ $Get_param   = mysqli_query($tryconnection, $query_param) or die(mysqli_error($mysqli_link)) ;
  $row_param   = mysqli_fetch_assoc($Get_param) ;
  $endahour    = $row_param['ENDHOUR'] ;
  $endamin     = $row_param['ENDMIN'] ;
@@ -78,13 +78,13 @@ if (isset($_POST['check'])) {
  $empty = 0 ;
 
  $whatdate = "SELECT FROM_UNIXTIME('$date','%Y-%m-%d') as NEWDATE" ;
- $readit = mysql_query($whatdate, $tryconnection) or die(mysql_error()); 
+ $readit = mysqli_query($tryconnection, $whatdate) or die(mysqli_error($mysqli_link)); 
  $row_date = mysqli_fetch_assoc($readit) ;
  $english = $row_date['NEWDATE'] ;
 
  while ($cycle >= $show) {
   $CHK1 = "SELECT APPTNUM FROM APPTS WHERE DATEOF = '$english' AND TIMEOF = '$newtime' AND SHORTDOC = '$docsurname' AND CANCELLED <> 1 LIMIT 1" ;
-  $query_CHK1 = mysql_query($CHK1, $tryconnection) or die(mysql_error()) ;
+  $query_CHK1 = mysqli_query($tryconnection, $CHK1) or die(mysqli_error($mysqli_link)) ;
   $row_CHK1 = mysqli_fetch_array($query_CHK1) ;
 
 // Check for collisions
@@ -125,7 +125,7 @@ if ($empty == 0 ) {
 // Set up to add a note in the medical history.
 
     $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-    $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+    $PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
     $row_PREFER = mysqli_fetch_assoc($PREFER);
     
     $client = $_SESSION['client'] ;
@@ -134,38 +134,38 @@ if ($empty == 0 ) {
     $treatmxx="TREATM".floor($treatmxx);
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx LIMIT 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	 $create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	 $result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	 $result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	}
 	
 	$today = 'Appointment made by '.
-	mysql_real_escape_string($_POST['staff']).
-	' for '. mysql_real_escape_string($_POST['problem'])  ;
+	mysqli_real_escape_string($mysqli_link, $_POST['staff']).
+	' for '. mysqli_real_escape_string($mysqli_link, $_POST['problem'])  ;
   	
-	$insertSQL1 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$patient','CLINICAL EXAMINATION',960,'91', '".mysql_real_escape_string($_POST['staff'])."', DATE_FORMAT(NOW(), '%Y/%m/%d'))";
+	$insertSQL1 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$patient','CLINICAL EXAMINATION',960,'91', '".mysqli_real_escape_string($mysqli_link, $_POST['staff'])."', DATE_FORMAT(NOW(), '%Y/%m/%d'))";
 
-    mysql_query($insertSQL1, $tryconnection) or die(mysql_error()) ;
-    $insertSQL2 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$patient','$today', 960,'92', '".mysql_real_escape_string($_POST['staff'])."',  DATE_FORMAT(NOW(), '%Y/%m/%d'))";
-    mysql_query($insertSQL2, $tryconnection)  or die(mysql_error()) ;
+    mysqli_query($tryconnection, $insertSQL1) or die(mysqli_error($mysqli_link)) ;
+    $insertSQL2 = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$patient','$today', 960,'92', '".mysqli_real_escape_string($mysqli_link, $_POST['staff'])."',  DATE_FORMAT(NOW(), '%Y/%m/%d'))";
+    mysqli_query($tryconnection, $insertSQL2)  or die(mysqli_error($mysqli_link)) ;
    
  $query_insertSQL="INSERT INTO APPTS (DATEOF, TIMEOF, SHORTDOC, DATEMADE, DOCREQ, DURATION, CUSTNO, NAME, CONTACT, PETID, PETNAME, RFPETTYPE, PSEX, LOCATION, PROBLEM, DESCRIP, NEWCL, NEWPET, CAREA, PHONE1, CAREA2, PHONE2, CAREA3, PHONE3, BUSEXT, STAFF)
-                VALUES (STR_TO_DATE('$_POST[datein]','%m/%d/%Y'),'$time_requested','".mysql_real_escape_string($_GET['doctor'])."', NOW(), '$_POST[requested]','$duration',
-                '$row_PATIENT_CLIENT[CUSTNO]', '".mysql_real_escape_string($row_PATIENT_CLIENT['COMPANY'])."', '".mysql_real_escape_string($row_PATIENT_CLIENT['CONTACT'])."','$row_PATIENT_CLIENT[PETID]', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PETTYPE]', '$row_PATIENT_CLIENT[PSEX]', '1','".mysql_real_escape_string($_POST['problem'])."', 
-                '".mysql_real_escape_string($row_PATIENT_CLIENT['PETBREED'])."','$_POST[newcl]','$_POST[newpnt]','".mysql_real_escape_string($row_PATIENT_CLIENT['CAREA'])."','".mysql_real_escape_string($row_PATIENT_CLIENT['PHONE'])."',
-                '".mysql_real_escape_string($row_PATIENT_CLIENT['CAREA2'])."', '".mysql_real_escape_string($row_PATIENT_CLIENT['PHONE2'])."',
-                '".mysql_real_escape_string($row_PATIENT_CLIENT['CAREA3'])."', '".mysql_real_escape_string($row_PATIENT_CLIENT['PHONE3'])."','".mysql_real_escape_string($row_PATIENT_CLIENT['CBEXT'])."','".mysql_real_escape_string($_POST['staff'])."')";
+                VALUES (STR_TO_DATE('$_POST[datein]','%m/%d/%Y'),'$time_requested','".mysqli_real_escape_string($mysqli_link, $_GET['doctor'])."', NOW(), '$_POST[requested]','$duration',
+                '$row_PATIENT_CLIENT[CUSTNO]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['COMPANY'])."', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CONTACT'])."','$row_PATIENT_CLIENT[PETID]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PETTYPE]', '$row_PATIENT_CLIENT[PSEX]', '1','".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."', 
+                '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETBREED'])."','$_POST[newcl]','$_POST[newpnt]','".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CAREA'])."','".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PHONE'])."',
+                '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CAREA2'])."', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PHONE2'])."',
+                '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CAREA3'])."', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PHONE3'])."','".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['CBEXT'])."','".mysqli_real_escape_string($mysqli_link, $_POST['staff'])."')";
                 
-    $insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error()); 
+    $insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link)); 
     
     $year = substr($_POST['datein'],6,4) ;
     $month = substr($_POST['datein'],0,2) ;
     $day_of_month = substr($_POST['datein'],3,2) ;
     
     $today = "SELECT DATE(NOW()) AS DATE, TIME(NOW()) AS TIME ";
-    $query_date = mysql_query($today, $tryconnection) or die(mysql_error()) ;
+    $query_date = mysqli_query($tryconnection, $today) or die(mysqli_error($mysqli_link)) ;
     $row_date = mysqli_fetch_array($query_date) ;
     $datex = $row_date['DATE'] ;
     $timex = $row_date['TIME'] ;
@@ -174,7 +174,7 @@ if ($empty == 0 ) {
                 CLINICIAN) SELECT CUSTNO,NAME,PETID,PETNAME,RFPETTYPE,'1',DESCRIP,PSEX,CONTACT,PROBLEM,CAREA,PHONE1,CAREA2,PHONE2,CAREA3,PHONE3,BUSEXT,DATEOF,TIMEOF,
                 SHORTDOC FROM APPTS WHERE DATEOF = '$datex' AND TIMEOF >= '$timex' AND CANCELLED <> 1 AND NOT EXISTS (SELECT RFPETID FROM RECEP WHERE RECEP.RFPETID = APPTS.PETID  AND RECEP.DATEIN = '$datex' )" ;
                 
-    $update_it = mysql_query($Auto_roll, $tryconnection) or die(mysql_error()) ;
+    $update_it = mysqli_query($tryconnection, $Auto_roll) or die(mysqli_error($mysqli_link)) ;
  //  
 /*
 // if it is for today, add to reception file if not already there.                ,

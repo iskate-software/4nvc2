@@ -9,7 +9,7 @@ while($day <= 31) {
 $today = strtotime('$year'. '-'. '$month'. '-' . '$day') ;
 if (checkdate($month,$day,$year) {
  $DOCMONTH = "SELECT INITIALS,DUTY ORDER BY SEQ FROM HRSDOC WHERE DATE = '$today' AND DUTY <> '00000000000000' " ;
- $Get_Doc = mysql_query($DOCMONTH, $tryconnection) or die(mysql_error()) ;
+ $Get_Doc = mysqli_query($tryconnection, $DOCMONTH) or die(mysqli_error($mysqli_link)) ;
 // and paint the screen.
  while($row = mysqli_fetch_assoc($Get_Doc))
 // now look for the individual flags that show where they are.. (PHP starts at posn 0. This table 

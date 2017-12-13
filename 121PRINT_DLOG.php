@@ -84,9 +84,9 @@ elseif (isset($_SESSION['hospital_patient']) || !empty($_GET['hospital_patient']
 
 /////////////////////////////////////
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_DLOG = "SELECT *, DATE_FORMAT(CREDATE, '%m/%d/%Y $timeformat') AS CREDATE, DATE_FORMAT(TDATE, '%m/%d/%Y') AS TDATE, DATE_FORMAT(TTIME, '$timeformat') AS TTIME FROM TICKLER ".$left." JOIN  PETMAST ON (PETMAST.PETID=TICKLER.DLPETID AND PETMAST.PETNAME LIKE '$petname%') WHERE TICKLER.CREDATE LIKE '$credate%' AND TICKLER.TDATE LIKE '$tdate%' AND TICKLER.ENTEREDBY LIKE '$enteredby%' AND TICKLER.WHOTODO LIKE '$whotodo%' ".$hospital_patient." ORDER BY ".$sortby." ASC";
-$DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
+$DLOG = mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
 $row_DLOG = mysqli_fetch_assoc($DLOG);
 $totalRows_DLOG = mysqli_num_rows($DLOG);
 

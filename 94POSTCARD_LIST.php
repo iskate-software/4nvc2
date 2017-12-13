@@ -2,9 +2,9 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$_GET[type]' ORDER BY SUBTYPE ASC";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
 $row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 

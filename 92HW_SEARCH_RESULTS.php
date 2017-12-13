@@ -2,7 +2,7 @@
  session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $startyear=$_POST['startyear'];
 echo ' starting year is ' . $startyear ;
@@ -78,10 +78,10 @@ if (isset($_SESSION['newtable'])){
 
  $xtable = $_SESSION['newtable'];
  $query_RECALL = "DROP TABLE IF EXISTS $xtable";
- $RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+ $RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
  
  $query_RECALL2 = "CREATE TABLE $xtable LIKE MAILING" ;
- $RECAL2L = mysql_query($query_RECALL2, $tryconnection) or die(mysql_error());
+ $RECAL2L = mysqli_query($tryconnection, $query_RECALL2) or die(mysqli_error($mysqli_link));
  
 
  echo 'Table was truncated ' ;
@@ -89,7 +89,7 @@ if (isset($_SESSION['newtable'])){
  echo ' and about to be stuffed ' ;
  echo $xtable ;
  $Lastyr = "SELECT YEAR(NOW())- 1 AS Lyear" ;
- $getyr = mysql_query($Lastyr, $tryconnection) or die(mysql_error()) ;
+ $getyr = mysqli_query($tryconnection, $Lastyr) or die(mysqli_error($mysqli_link)) ;
  $getyr1 = mysqli_fetch_assoc($getyr) ;
  $rowlast = $getyr1['Lyear'] ;
  $lastOct = $rowlast.'-10-31' ;
@@ -138,10 +138,10 @@ if (isset($_SESSION['newtable'])){
  AND PLASTDATE > '$lastOct' $skipref $namerange $annskip $mailing";
  }
  
- $RECALL = mysql_query($query_RECALL, $tryconnection) or die(mysql_error());
+ $RECALL = mysqli_query($tryconnection, $query_RECALL) or die(mysqli_error($mysqli_link));
  echo ' Done ' ;
  $select_RECALL = "SELECT * FROM $xtable ORDER BY COMPANY,CONTACT,CUSTNO";
- $select_RECALLS = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
+ $select_RECALLS = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
 
  $row_RECALL = mysqli_fetch_assoc($select_RECALLS);
  $totalRows_RECALL = mysqli_num_rows($select_RECALLS);
@@ -152,7 +152,7 @@ if (isset($_SESSION['newtable'])){
 else {
 $xtable = $_SESSION['oldtable'];
 $select_RECALL = "SELECT * FROM $xtable ORDER BY COMPANY,CONTACT,CUSTNO";
-$select_RECALLS = mysql_query($select_RECALL, $tryconnection) or die(mysql_error());
+$select_RECALLS = mysqli_query($tryconnection, $select_RECALL) or die(mysqli_error($mysqli_link));
 $row_RECALL = mysqli_fetch_assoc($select_RECALLS);
 $totalRows_RECALL = mysqli_num_rows($select_RECALLS);
 }
@@ -160,16 +160,16 @@ echo ' Done again ' ;
 
 
 $query_REPLOG = "SELECT * FROM REPLOG WHERE TYPE='$xtable' ORDER BY LOGDTE DESC LIMIT 1";
-$REPLOG = mysql_query($query_REPLOG, $tryconnection) or die(mysql_error());
+$REPLOG = mysqli_query($tryconnection, $query_REPLOG) or die(mysqli_error($mysqli_link));
 $row_REPLOG = mysqli_fetch_assoc($REPLOG);
 
 $query_POSTCARDS = "SELECT * FROM POSTCARDS WHERE TYPE='$xtable'";
-$POSTCARDS = mysql_query($query_POSTCARDS, $tryconnection) or die(mysql_error());
+$POSTCARDS = mysqli_query($tryconnection, $query_POSTCARDS) or die(mysqli_error($mysqli_link));
 $row_POSTCARDS = mysqli_fetch_assoc($POSTCARDS);
 
 
 if ($xtable == 'HEARTWORM') {
-$xsearch = mysql_real_escape_string("Tested between '$_POST[startyear]' - '$_POST[endyear]'");
+$xsearch = mysqli_real_escape_string($mysqli_link, "Tested between '$_POST[startyear]' - '$_POST[endyear]'");
 }
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->

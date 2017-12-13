@@ -4,11 +4,11 @@ require_once('../../tryconnection.php');
 $refid = $_GET['refid'];
 $tea = $_GET['tea'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if ($refid!='0'){
 $query_REFERRAL = "SELECT * FROM REFER WHERE REFID='$refid'";
-$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
+$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
 $row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 }
 
@@ -19,44 +19,44 @@ if (!empty($_POST['phone2a'])){$phone2=$_POST['phone2a'].'-'.$_POST['phone2b'];}
 
 if (isset($_POST['save']) && $refid!='0'){
 $query_REFERRAL = sprintf("UPDATE REFER SET REFCLIN='%s', REFVET='%s', REFVETFN='%s', VETTIT='%s', ADDRESS='%s', CITY='%s', STATE='%s', ZIP='%s', CAREA='%s', CAREA2='%s', PHONE='%s', PHONE2='%s'  WHERE REFID='$refid'",
-					mysql_real_escape_string($_POST['refclin']),
-					mysql_real_escape_string($_POST['refvet']),
-					mysql_real_escape_string($_POST['refvetfn']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refclin']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refvet']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refvetfn']),
 					$_POST['vettit'],
-					mysql_real_escape_string($_POST['address']),
-					mysql_real_escape_string($_POST['city']),
-					mysql_real_escape_string($_POST['state']),
+					mysqli_real_escape_string($mysqli_link, $_POST['address']),
+					mysqli_real_escape_string($mysqli_link, $_POST['city']),
+					mysqli_real_escape_string($mysqli_link, $_POST['state']),
                     strtoupper($_POST['zip']), 
 					$_POST['carea'],
 					$_POST['carea2'],
 					$phone,
 					$phone2
 					);
-$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
+$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
 header("Location:REFERRALS_SEARCH_SCREEN.php");
 }
 else if (isset($_POST['save']) && $refid=='0'){
 $query_REFERRAL = sprintf("INSERT INTO REFER  (REFCLIN, REFVET, REFVETFN, VETTIT, ADDRESS, CITY, STATE, ZIP, CAREA, CAREA2, PHONE, PHONE2) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
-					mysql_real_escape_string($_POST['refclin']),
-					mysql_real_escape_string($_POST['refvet']),
-					mysql_real_escape_string($_POST['refvetfn']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refclin']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refvet']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refvetfn']),
 					$_POST['vettit'],
-					mysql_real_escape_string($_POST['address']),
-					mysql_real_escape_string($_POST['city']),
-					mysql_real_escape_string($_POST['state']),
+					mysqli_real_escape_string($mysqli_link, $_POST['address']),
+					mysqli_real_escape_string($mysqli_link, $_POST['city']),
+					mysqli_real_escape_string($mysqli_link, $_POST['state']),
                     strtoupper($_POST['zip']), 
 					$_POST['carea'],
 					$_POST['carea2'],
 					$phone,
 					$phone2
 					);
-$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
+$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
 header("Location:REFERRALS_SEARCH_SCREEN.php");
 }
 
 else if (isset($_POST['delete'])){
 $query_REFERRAL = "DELETE FROM REFER WHERE REFID='$refid'";
-$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
+$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
 header("Location:REFERRALS_SEARCH_SCREEN.php");
 }
 

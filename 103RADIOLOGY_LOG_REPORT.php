@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (!empty($_GET['startdate'])){
 $startdate=$_GET['startdate'];
@@ -13,7 +13,7 @@ $startdate='00/00/0000';
 $stdum = $startdate ;
 
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -25,7 +25,7 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $search = "" ;
@@ -48,7 +48,7 @@ else  {
 */
 
 $Wtunit_get = "SELECT HOSPNAME, WEIGHTUNIT FROM CRITDATA LIMIT 1" ;
-$query_wt = mysql_query($Wtunit_get, $tryconnection) or die(mysql_error()) ;
+$query_wt = mysqli_query($tryconnection, $Wtunit_get) or die(mysqli_error($mysqli_link)) ;
 $row_Wt = mysqli_fetch_assoc($query_wt) ;
 
 $Wtunit = $row_Wt['WEIGHTUNIT'].',' ;
@@ -59,7 +59,7 @@ $surg_get = "SELECT INVDTE, RADLOG.CUSTNO, RADLOG.PETID TITLE,CONTACT,COMPANY,CA
              FROM RADLOG LEFT JOIN ARCUSTO ON RADLOG.CUSTNO = ARCUSTO.CUSTNO 
              LEFT JOIN PETMAST ON RADLOG.PETID = PETMAST.PETID WHERE INVDTE  >= '$startdate[0]' AND INVDTE <= '$enddate[0]' $search " ;
              
-$query_surg = mysql_query($surg_get, $tryconnection) or die(mysql_error()) ;
+$query_surg = mysqli_query($tryconnection, $surg_get) or die(mysqli_error($mysqli_link)) ;
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

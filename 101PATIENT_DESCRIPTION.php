@@ -4,19 +4,19 @@ require_once('../../tryconnection.php');
 
 $patient = $_GET['patient'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_DESCRIPTION = "SELECT PDESCRIPTION FROM EQDESC WHERE DPETID = '$patient'";
-$DESCRIPTION = mysql_query($query_DESCRIPTION, $tryconnection) or die(mysql_error());
+$DESCRIPTION = mysqli_query($tryconnection, $query_DESCRIPTION) or die(mysqli_error($mysqli_link));
 $row_DESCRIPTION = mysqli_fetch_assoc($DESCRIPTION);
 
 if (isset($_POST['save'])){
 	if (empty($row_DESCRIPTION['PDESCRIPTION'])){
-	$insert_PDESC="INSERT INTO EQDESC (DPETID, PDESCRIPTION) VALUES ('$patient','".mysql_real_escape_string($_POST['description'])."')";
-	$result=mysql_query($insert_PDESC, $tryconnection) or die(mysql_error());
+	$insert_PDESC="INSERT INTO EQDESC (DPETID, PDESCRIPTION) VALUES ('$patient','".mysqli_real_escape_string($mysqli_link, $_POST['description'])."')";
+	$result=mysqli_query($tryconnection, $insert_PDESC) or die(mysqli_error($mysqli_link));
 	}
 	else {
-	$update_PDESC="UPDATE EQDESC SET PDESCRIPTION='".mysql_real_escape_string($_POST['description'])."' WHERE DPETID='$patient'";
-	$result=mysql_query($update_PDESC, $tryconnection) or die(mysql_error());	
+	$update_PDESC="UPDATE EQDESC SET PDESCRIPTION='".mysqli_real_escape_string($mysqli_link, $_POST['description'])."' WHERE DPETID='$patient'";
+	$result=mysqli_query($tryconnection, $update_PDESC) or die(mysqli_error($mysqli_link));	
 	}
 $closewin='self.close();';
 }
